@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".home.HomeFragment">
+
+    <ImageView
+        android:id="@+id/home_mySkinType"
+        android:layout_width="423dp"
+        android:layout_height="418dp"
+        android:src="@drawable/go_my_skin_type"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/home_categoryBtn"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:background="@null"
+        android:text="\n\n\n카테고리 별"
+        android:textColor="#6a6a6a"
+        app:layout_constraintEnd_toStartOf="@+id/home_brandBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/home_mySkinType" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/icon_category"
+        app:layout_constraintEnd_toEndOf="@+id/home_categoryBtn"
+        app:layout_constraintStart_toStartOf="@+id/home_categoryBtn"
+        app:layout_constraintTop_toTopOf="@+id/home_categoryBtn" />
+
+    <Button
+        android:id="@+id/home_brandBtn"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:background="@null"
+        android:text="\n\n\n  브랜드 별"
+        android:textColor="#6a6a6a"
+        app:layout_constraintEnd_toStartOf="@+id/home_skinTypeBtn"
+        app:layout_constraintStart_toEndOf="@+id/home_categoryBtn"
+        app:layout_constraintTop_toBottomOf="@+id/home_mySkinType" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/icon_brand"
+        app:layout_constraintEnd_toEndOf="@+id/home_brandBtn"
+        app:layout_constraintHorizontal_bias="0.56"
+        app:layout_constraintStart_toStartOf="@+id/home_brandBtn"
+        app:layout_constraintTop_toTopOf="@+id/home_brandBtn" />
+
+    <Button
+        android:id="@+id/home_skinTypeBtn"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:background="@null"
+        android:text="\n\n\n피부타입 별"
+        android:textColor="#6a6a6a"
+        app:layout_constraintEnd_toStartOf="@+id/home_ageBtn"
+        app:layout_constraintStart_toEndOf="@+id/home_brandBtn"
+        app:layout_constraintTop_toBottomOf="@+id/home_mySkinType" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/icon_skin_type"
+        app:layout_constraintEnd_toEndOf="@+id/home_skinTypeBtn"
+        app:layout_constraintStart_toStartOf="@+id/home_skinTypeBtn"
+        app:layout_constraintTop_toTopOf="@+id/home_skinTypeBtn" />
+
+    <Button
+        android:id="@+id/home_ageBtn"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:background="@null"
+        android:text="\n\n\n연령대 별"
+        android:textColor="#6a6a6a"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/home_skinTypeBtn"
+        app:layout_constraintTop_toBottomOf="@+id/home_mySkinType" />
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/icon_age"
+        app:layout_constraintEnd_toEndOf="@+id/home_ageBtn"
+        app:layout_constraintStart_toStartOf="@+id/home_ageBtn"
+        app:layout_constraintTop_toTopOf="@+id/home_ageBtn" />
+</androidx.constraintlayout.widget.ConstraintLayout>

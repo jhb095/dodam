@@ -1,157 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    tools:context=".login.SignUpActivity">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <Button
-            android:id="@+id/Button_exit"
-            style="?android:borderlessButtonStyle"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/icon_exit">
-
-        </Button>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_centerVertical="true"
-            android:text="회원가입"
-            android:textSize="20sp"
-            android:textStyle="bold">
-
-        </TextView>
-
-        <Button
-            style="?android:borderlessButtonStyle"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:text="완료"
-            android:textColor="@android:color/holo_red_dark"
-            android:textSize="20sp">
-
-        </Button>
-    </RelativeLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="12dp">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:hint="휴대폰 번호"
-            android:inputType="number"
-            android:textColor="@color/colorBlack">
-
-
-        </com.google.android.material.textfield.TextInputEditText>
-    </com.google.android.material.textfield.TextInputLayout>
-
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="12dp">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:hint="비밀 번호"
-            android:textColor="@color/colorBlack">
-
-
-        </com.google.android.material.textfield.TextInputEditText>
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="12dp">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:hint="이름"
-            android:textColor="@color/colorBlack">
-
-
-        </com.google.android.material.textfield.TextInputEditText>
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="12dp">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/birth"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:hint="생년월일"
-            android:textColor="@color/colorBlack">
-
-        </com.google.android.material.textfield.TextInputEditText>
-    </com.google.android.material.textfield.TextInputLayout>
+    <ImageView
+        android:id="@+id/signUp_exit"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/icon_exit"/>
 
     <TextView
-        android:layout_width="match_parent"
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="14dp"
-        android:layout_marginTop="14dp"
-        android:layout_marginRight="14dp"
-        android:text="성별"
-        android:textSize="20dp">
+        android:layout_marginStart="130dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="124dp"
+        android:text="회원가입"
+        android:textColor="#000000"
+        android:textSize="20dp"
+        app:layout_constraintEnd_toStartOf="@+id/signUp_completeTV"
+        app:layout_constraintStart_toEndOf="@+id/signUp_exit"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    </TextView>
-
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/signUp_completeTV"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="12dp"
-        android:orientation="horizontal">
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:text="완료"
+        android:textSize="18dp"
+        android:textColor="#ef889a"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <RadioGroup
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+    <EditText
+        android:id="@+id/signUp_phoneNumberET"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="40dp"
+        android:ems="10"
+        android:hint="휴대폰 번호"
+        android:inputType="phone"
+        android:textColor="#000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="남"
-                android:textSize="20sp">
+    <EditText
+        android:id="@+id/signUp_passwordET"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:ems="10"
+        android:hint="비밀번호"
+        android:inputType="textPassword"
+        android:textColor="#000000"
+        app:layout_constraintEnd_toEndOf="@+id/signUp_phoneNumberET"
+        app:layout_constraintStart_toStartOf="@+id/signUp_phoneNumberET"
+        app:layout_constraintTop_toBottomOf="@+id/signUp_phoneNumberET" />
 
-            </RadioButton>
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:text="여"
-                android:textSize="20sp">
-
-            </RadioButton>
-        </RadioGroup>
-
-
-    </LinearLayout>
-
-
-</LinearLayout>
+    <EditText
+        android:id="@+id/signUp_nameET"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:ems="10"
+        android:hint="이름"
+        android:inputType="textPersonName"
+        android:textColor="#000000"
+        app:layout_constraintEnd_toEndOf="@+id/signUp_passwordET"
+        app:layout_constraintStart_toStartOf="@+id/signUp_passwordET"
+        app:layout_constraintTop_toBottomOf="@+id/signUp_passwordET" />
+</androidx.constraintlayout.widget.ConstraintLayout>

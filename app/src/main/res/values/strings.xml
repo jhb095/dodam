@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">dodam</string>
+
+    <!-- SignInUp Activity -->
+    <string name="sign_up_text"><b>휴대폰 번호</b> 또는 <b>이메일</b>로 가입</string>
+    <string name="sign_in_text">이미 가입하셨나요? <b>로그인하기</b></string>
+
+    <!-- Home Activity에서 각 Tab String -->
+    <string name="home">홈</string>
+    <string name="rank">랭킹</string>
+    <string name="recommend">추천</string>
+    <string name="my_skin_type">내 피부타입은?</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
