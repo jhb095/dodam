@@ -4,15 +4,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.dodam.R;
+import com.example.dodam.database.DatabaseManagement;
+import com.example.dodam.database.FirebaseCallback;
 import com.example.dodam.home.HomeActivity;
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,15 +43,30 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         switch(v.getId()) {
             // exit
             case R.id.signIn_exit:
+                finish();
+
                 break;
 
             // 다음
             case R.id.signIn_nextTV:
-                intent = new Intent(SignInActivity.this, HomeActivity.class);
-
-                startActivity(intent);
+                // 로그인
+                signIn();
 
                 break;
         }
+    }
+
+    // 로그인
+    private void signIn() {
+        DatabaseManagement.getInstance().signInEmail(this, "jhb095@kakao.com", "123456", new FirebaseCallback<Boolean>() {
+            @Override
+            public void onCallback(Boolean data) {
+                // 로그인 작업 성공
+                if(data) {
+                } else {
+                    // 실패
+                }
+            }
+        });
     }
 }

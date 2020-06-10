@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "830479809476",
+    "firebase_url": "https://dodam-a1823.firebaseio.com",
+    "project_id": "dodam-a1823",
+    "storage_bucket": "dodam-a1823.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:830479809476:android:b63ed86c4a2426e1528291",
+        "android_client_info": {
+          "package_name": "com.example.dodam"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "830479809476-vavrk9u7jrjq1dpgau765g2d1bqrploo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dodam",
+            "certificate_hash": "defb3a679e053c2da97da20ba034ee5cd61f68e7"
+          }
+        },
+        {
+          "client_id": "830479809476-63firj97ce2qcd6h3979tusm153e117e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqh8kPL6NTqo6AqFQ52zky4XSGJpYMPjM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "830479809476-63firj97ce2qcd6h3979tusm153e117e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

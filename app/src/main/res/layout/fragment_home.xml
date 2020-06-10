@@ -8,13 +8,13 @@
 
     <ImageView
         android:id="@+id/home_mySkinType"
-        android:layout_width="423dp"
-        android:layout_height="418dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:src="@drawable/go_my_skin_type"
+        android:adjustViewBounds="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
     <Button
         android:id="@+id/home_categoryBtn"
         android:layout_width="90dp"
