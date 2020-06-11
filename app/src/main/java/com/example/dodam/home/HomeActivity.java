@@ -25,6 +25,7 @@ public class HomeActivity extends AppCompatActivity {
         addTabs(viewPager);
     }
 
+    // 탭 추가
     private void addTabs(ViewPager viewPager) {
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
 
@@ -34,5 +35,10 @@ public class HomeActivity extends AppCompatActivity {
         sectionsPagerAdapter.addFrag(new MySkinTypeFragment());
 
         viewPager.setAdapter(sectionsPagerAdapter);
+    }
+
+    // ViewPage 전환 메소드(Fragment를 전환)
+    public void replaceFragment(int pos) {
+        viewPager.setCurrentItem(pos);
     }
 }

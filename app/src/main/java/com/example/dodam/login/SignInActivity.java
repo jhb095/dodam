@@ -4,8 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -38,8 +38,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        Intent intent;
-
         switch(v.getId()) {
             // exit
             case R.id.signIn_exit:
@@ -58,15 +56,27 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     // 로그인
     private void signIn() {
-        DatabaseManagement.getInstance().signInEmail(this, "jhb095@kakao.com", "123456", new FirebaseCallback<Boolean>() {
-            @Override
-            public void onCallback(Boolean data) {
-                // 로그인 작업 성공
-                if(data) {
-                } else {
-                    // 실패
-                }
-            }
-        });
+        EditText emailET, passwordET;
+
+        emailET = findViewById(R.id.signIn_emailET);
+        passwordET = findViewById(R.id.signIn_passwordET);
+
+        // 로그인 인증하기
+        DatabaseManagement.getInstance().signInEmail(this, emailET.getText().toString(), passwordET.getText().toString()
+                , new FirebaseCallback<Boolean>() {
+                    @Override
+                    public void onCallback(Boolean data) {
+                        // 로그인 작업 성공
+                        if(data) {
+                            Intent intent;
+
+                            intent = new Intent(SignInActivity.this, HomeActivity.class);
+
+                            // HomeActivity로 이동
+                            startActivity(intent);
+                            finish();
+                        }
+                    }
+                });
     }
 }

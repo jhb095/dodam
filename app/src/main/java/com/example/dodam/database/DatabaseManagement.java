@@ -20,12 +20,9 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 
 // 데이터베이스 전반적인 것을 다루는 클래스(싱글톤)
 public class DatabaseManagement {
@@ -77,7 +74,7 @@ public class DatabaseManagement {
                 });
     }
 
-    // DB에서 유저 정보 가져오기(DataManagement에 등록됨)
+    // DB에서 유저 정보 가져오기(콜백으로 처리)
     private void getUserDataFromDatabase(String email, final FirebaseCallback<UserData> callback) {
         DocumentReference userRef;
 
