@@ -110,7 +110,8 @@ public class SurveyItemRVAdapter extends RecyclerView.Adapter<SurveyItemRVAdapte
 
         void onBind(SurveyItemData data) {
             textView1.setText(data.getNumber());
-            textView1.setText(data.getContent());
+            textView1.setTextColor(data.getTint());
+            textView2.setText(data.getContent());
             leftIV.setBackgroundTintList(data.getTint());
         }
     }

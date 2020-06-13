@@ -83,6 +83,10 @@ public class DatabaseManagement {
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        UserData user;
+
+                        user = documentSnapshot.toObject(UserData.class);
+
                         callback.onCallback(documentSnapshot.toObject(UserData.class));
                     }
                 })
@@ -105,7 +109,9 @@ public class DatabaseManagement {
                             // 성공적으로 가입되었을 때
                             if(task.isSuccessful()) {
                                 // DB에 유저 정보 등록
-                                addUserToDatabase(activity, user);
+                                addUserToDatabase(user);
+
+                                activity.finish();
                             } else {
                                 // 가입 실패시
                                 System.out.println("이메일 회원가입 실패");
@@ -117,26 +123,21 @@ public class DatabaseManagement {
     }
 
     // DB에 사용자 등록
-    private void addUserToDatabase(final Activity activity, UserData user) {
-        CollectionReference userRef;
-        Map<String, UserData> userData;
+    public void addUserToDatabase(UserData user) {
+        CollectionReference userRef, testRef;
 
-        userData = new HashMap<>();
-
-        // user에 id값을 넣어줘야 한다.
-        user.setId(firebaseAuth.getCurrentUser().getUid());
-
-        // Map에 유저 등록
-        userData.put(user.getId(), user);
+        // user에 id값이 없으면 넣어줘야 한다.
+        if(user.getId() == null) {
+            user.setId(firebaseAuth.getCurrentUser().getUid());
+        }
 
         // DB Collection에 해당 유저 Document 추가
         userRef = database.collection(Constant.DB_COLLECTION_USERS);
         userRef.document(user.getEmail())
-                .set(userData)
+                .set(user)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        activity.finish();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -144,8 +145,6 @@ public class DatabaseManagement {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         System.out.println("유저 데이터 DB 등록 실패");
-
-                        Toast.makeText(activity, "DB 등록 실패", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
