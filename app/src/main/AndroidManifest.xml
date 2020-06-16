@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".home.HomeActivity"></activity>
+        <activity android:name=".home.BrandRanking"></activity>
+        <activity android:name=".home.HomeActivity" />
         <activity android:name=".login.SignUpActivity" />
         <activity android:name=".login.SignInUpActivity">
             <intent-filter>

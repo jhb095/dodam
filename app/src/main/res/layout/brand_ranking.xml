@@ -2,15 +2,44 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/colorPink"
+        android:orientation="horizontal"
+        android:weightSum="10">
+
+        <ImageView
+            android:layout_alignParentLeft="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:layout_centerVertical="true"
+            android:src="@drawable/arrow_back">
+
+        </ImageView>
+
+        <TextView
+            android:id="@+id/tv_brand_rank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="브랜드별 랭킹"
+            android:textColor="#ffffff"
+
+            android:layout_centerInParent="true"
+            android:textStyle="bold">
+
+        </TextView>
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:layout_margin="15dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/radius_search"
         android:orientation="horizontal">
 
@@ -32,12 +61,12 @@
     </LinearLayout>
 
     <TextView
-        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="#fff3f3f3"
         android:gravity="center"
         android:text="관심있는 브랜드의 베스트 제품을 확인해보세요!"
-        android:background="#fff3f3f3"
         android:textSize="15sp"
         android:textStyle="bold">
 
