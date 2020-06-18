@@ -6,7 +6,7 @@ import android.os.Bundle;
 
 import com.example.dodam.R;
 
-public class BrandRanking extends AppCompatActivity {
+public class BrandRankingActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
