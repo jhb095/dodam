@@ -71,7 +71,7 @@ public class MySkinTypeFragment extends Fragment implements View.OnClickListener
             // 추천 받으러 가기
             case R.id.mySkinType_goRecommendBtn:
                 ((HomeActivity)getActivity()).replaceFragment(2);
-                
+
                 break;
         }
     }
