@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:gravity="center"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/cosmeticRankItem_rankTV"
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:textSize="24dp"
+        android:textColor="#ef889a"
+        android:textStyle="bold">
+    </TextView>
+
+    <ImageView
+        android:id="@+id/cosmeticRankItem_cosmeticIV"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginRight="20dp"
+        android:background="@null"
+        android:src="@drawable/icon_brand">
+    </ImageView>
+
+    <LinearLayout
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/cosmeticRankItem_brandNameTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="브랜드 명"
+            android:textSize="12dp"
+            android:textColor="#6a6a6a">
+        </TextView>
+
+        <TextView
+            android:id="@+id/cosmeticRankItem_cosmeticNameTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="제품 명"
+            android:textSize="13dp"
+            android:textColor="#000000">
+        </TextView>
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_marginRight="5dp"
+        android:background="@null"
+        android:src="@drawable/icon_pink_star">
+    </ImageView>
+
+    <TextView
+        android:id="@+id/cosmeticRankItem_rateTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="4.11"
+        android:textSize="15dp"
+        android:textColor="#ef779a">
+    </TextView>
+</LinearLayout>

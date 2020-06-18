@@ -51,8 +51,7 @@
                 android:layout_height="100dp"
                 android:layout_gravity="center"
                 android:background="@null"
-                android:foregroundGravity="center"
-                android:src="">
+                android:foregroundGravity="center">
 
             </ImageView>
         </LinearLayout>

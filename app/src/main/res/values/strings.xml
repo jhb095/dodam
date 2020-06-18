@@ -17,6 +17,10 @@
     <string name="recommend">추천</string>
     <string name="my_skin_type">내 피부타입은?</string>
 
+    <!-- Rank Fragment -->
+    <string name="theme_best_text">테마별 베스트</string>
+    <string name="review_best_text">리뷰 베스트</string>
+
     <!-- MySkinType Fragment -->
     <string name="my_skin_type_start_content">
         지금부터 피부 진단을 시작합니다.\n\n

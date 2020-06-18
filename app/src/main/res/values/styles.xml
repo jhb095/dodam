@@ -19,4 +19,8 @@
     <style name="PickerDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
+    <style name="TabBackground">
+        <item name="tabBackground">@drawable/tab_background</item>
+    </style>
 </resources>
