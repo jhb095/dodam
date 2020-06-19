@@ -12,9 +12,10 @@
         android:weightSum="10">
 
         <ImageView
-            android:layout_alignParentLeft="true"
+            android:id="@+id/brandRanking_backIV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:background="@null"
             android:layout_centerVertical="true"
             android:src="@drawable/arrow_back">
@@ -22,20 +23,17 @@
         </ImageView>
 
         <TextView
-            android:id="@+id/tv_brand_rank"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="브랜드별 랭킹"
             android:textColor="#ffffff"
-
-            android:layout_centerInParent="true"
-            android:textStyle="bold">
+            android:textSize="18dp"
+            android:layout_centerInParent="true">
 
         </TextView>
     </RelativeLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
@@ -44,13 +42,12 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:id="@null"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:background="@drawable/icon_search" />
 
         <EditText
-            android:id="@+id/home_searchET"
+            android:id="@+id/brandRanking_searchBrandET"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -62,28 +59,16 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="10dp"
+        android:layout_height="40dp"
         android:background="#fff3f3f3"
         android:gravity="center"
         android:text="관심있는 브랜드의 베스트 제품을 확인해보세요!"
-        android:textSize="15sp"
-        android:textStyle="bold">
-
+        android:textSize="14dp">
     </TextView>
 
-    <LinearLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/brandRanking_brandRV"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <!-- A RecyclerView with some commonly used attributes -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/my_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical" />
-
-    </LinearLayout>
-
-
+        android:layout_height="match_parent">
+    </androidx.recyclerview.widget.RecyclerView>
 </LinearLayout>

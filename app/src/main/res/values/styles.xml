@@ -23,4 +23,13 @@
     <style name="TabBackground">
         <item name="tabBackground">@drawable/tab_background</item>
     </style>
+
+    <style name="TabText">
+        <item name="android:textSize">16dp</item>
+    </style>
+
+    <style name="TabTextBold">
+        <item name="android:textSize">16dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>
