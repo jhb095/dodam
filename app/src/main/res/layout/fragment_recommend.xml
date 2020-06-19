@@ -169,7 +169,7 @@
             android:id="@+id/IV"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="@drawable/teardrop">
+            android:background="@drawable/icon_ingredient">
 
         </ImageView>
         <TextView

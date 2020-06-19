@@ -95,6 +95,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             // 연령대 별 버튼
             case R.id.home_ageBtn:
                 break;
+
+            // 제품 추가 버튼
+            case R.id.home_addCosmeticBtn:
+                break;
         }
     }
 }

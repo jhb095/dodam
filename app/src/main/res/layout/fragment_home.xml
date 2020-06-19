@@ -99,4 +99,18 @@
         app:layout_constraintEnd_toEndOf="@+id/home_ageBtn"
         app:layout_constraintStart_toStartOf="@+id/home_ageBtn"
         app:layout_constraintTop_toTopOf="@+id/home_ageBtn" />
+
+    <Button
+        android:id="@+id/home_addCosmeticBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:background="@null"
+        android:drawableLeft="@drawable/icon_age"
+        android:drawableTint="#ef889a"
+        android:text="  제품 추가하러 가기"
+        android:textColor="#ef889a"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/home_categoryBtn"></Button>
 </androidx.constraintlayout.widget.ConstraintLayout>
