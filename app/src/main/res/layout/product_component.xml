@@ -33,6 +33,7 @@
                 android:text="정제수;증류수;물"
                 android:textColor="@color/colorBlack"
                 android:textSize="15dp" />
+
         </LinearLayout>
 
     </LinearLayout>
