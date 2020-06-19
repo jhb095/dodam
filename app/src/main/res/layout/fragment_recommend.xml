@@ -12,10 +12,11 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:gravity="center"
             android:text="내 피부는"
             android:textColor="@color/colorBlack"
-            android:textSize="18sp"
+            android:textSize="16dp"
             android:textStyle="bold">
 
         </TextView>
@@ -27,26 +28,30 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/recommend_skinType1TV"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_gravity="center"
                 android:layout_marginLeft="110dp"
-                android:background="@drawable/pink_circle_bold"
+                android:background="@drawable/pink_circle"
                 android:gravity="center"
                 android:text="지성"
+                android:textSize="18dp"
                 android:textColor="@color/colorPink"
                 android:textStyle="bold">
 
             </TextView>
 
             <TextView
+                android:id="@+id/recommend_skintype2TV"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="110dp"
-                android:background="@drawable/pink_circle_bold"
+                android:background="@drawable/pink_circle"
                 android:gravity="center"
                 android:text="민감성"
+                android:textSize="18dp"
                 android:textColor="@color/colorPink"
                 android:textStyle="bold">
 
@@ -57,7 +62,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="30dp"
             android:orientation="vertical">
 
             <TextView
@@ -66,9 +71,8 @@
                 android:layout_marginLeft="15dp"
                 android:text="내 피부랑 잘맞는 제품"
                 android:textColor="@color/colorBlack"
-                android:textSize="18sp"
+                android:textSize="18dp"
                 android:textStyle="bold">
-
             </TextView>
 
             <TextView
@@ -82,18 +86,17 @@
             </TextView>
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recommend_incorrectIngredientRV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp">
-
             </androidx.recyclerview.widget.RecyclerView>
-
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="30dp"
             android:orientation="vertical">
 
             <RelativeLayout
@@ -105,34 +108,35 @@
                     android:id="@+id/TV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
                     android:gravity="center"
                     android:text="나랑 안 맞았던 제품"
                     android:textColor="@color/colorBlack"
-                    android:textSize="18sp"
+                    android:textSize="18dp"
                     android:textStyle="bold">
 
                 </TextView>
 
                 <Button
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:id="@+id/recommend_addIncorrectCosmeticBtn"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginLeft="10dp"
                     android:layout_toRightOf="@+id/TV"
-                    android:background="@drawable/add_button"
-                    android:backgroundTint="@color/colorPink">
-
+                    android:background="@drawable/icon_pink_add_button">
                 </Button>
             </RelativeLayout>
 
             <TextView
+                android:id="@+id/recommend_incorrectCosmeticCountTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
-                android:text="누적제품 n개">
-
+                android:text="누적제품 n개"
+                android:textColor="#454545">
             </TextView>
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recommend_incorrectCosmeticRV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp">
@@ -141,6 +145,7 @@
         </LinearLayout>
 
         <Button
+            android:id="@+id/recommend_analysisBtn"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -148,7 +153,9 @@
             android:background="@drawable/radius_pink"
             android:text="분석하기"
             android:textColor="@color/colorWhite"
-            android:textStyle="bold"></Button>
+            android:textSize="16dp"
+            android:textStyle="bold">
+        </Button>
 
         <TextView
             android:layout_width="match_parent"
@@ -156,33 +163,32 @@
             android:layout_marginTop="15dp"
             android:gravity="center"
             android:text="공통적으로 추출된\n나랑안맞는 성분은"
-            android:textColor="@color/colorBlack"></TextView>
+            android:textColor="@color/colorBlack"
+            android:textSize="18dp">
+        </TextView>
         
         <RelativeLayout
             android:layout_margin="12dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/border"
-            >
+            android:background="@drawable/border">
 
         <ImageView
             android:id="@+id/IV"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:background="@drawable/icon_ingredient">
-
         </ImageView>
+
         <TextView
             android:layout_toRightOf="@+id/IV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:gravity="center"
             android:textSize="18sp"
             android:textColor="@color/colorBlack"
             android:textStyle="bold"
             android:text="1,2-헥산다이올; 1,2-헥산디올(구명칭)">
-
         </TextView>
         </RelativeLayout>
     </LinearLayout>

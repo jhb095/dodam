@@ -8,8 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/colorPink"
-        android:orientation="horizontal"
-        android:weightSum="10">
+        android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/brandRanking_backIV"
@@ -18,7 +17,7 @@
             android:layout_marginLeft="10dp"
             android:background="@null"
             android:layout_centerVertical="true"
-            android:src="@drawable/arrow_back">
+            android:src="@drawable/icon_arrow_back">
 
         </ImageView>
 

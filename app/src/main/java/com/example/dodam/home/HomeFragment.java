@@ -40,18 +40,20 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     // Button 초기화
     private void initializeButton() {
-        Button categoryBtn, brandBtn, skinTypeBtn, ageBtn;
+        Button categoryBtn, brandBtn, skinTypeBtn, ageBtn, addCosmeticBtn;
 
         categoryBtn = root.findViewById(R.id.home_categoryBtn);
         brandBtn = root.findViewById(R.id.home_brandBtn);
         skinTypeBtn = root.findViewById(R.id.home_skinTypeBtn);
         ageBtn = root.findViewById(R.id.home_ageBtn);
+        addCosmeticBtn = root.findViewById(R.id.home_addCosmeticBtn);
 
         // Click Listener 추가
         categoryBtn.setOnClickListener(this);
         brandBtn.setOnClickListener(this);
         skinTypeBtn.setOnClickListener(this);
         ageBtn.setOnClickListener(this);
+        addCosmeticBtn.setOnClickListener(this);
     }
 
     // ImageView 초기화
@@ -71,13 +73,20 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         switch(v.getId()) {
             // 내 피부타입은? 이미지
             case R.id.home_mySkinType:
-                // MySkinTypeFragment로 이동
+                // MySkinType Fragment로 이동
                 ((HomeActivity)getActivity()).replaceFragment(3);
 
                 break;
 
             // 카테고리 별 버튼
             case R.id.home_categoryBtn:
+            // 피부타입 별 버튼
+            case R.id.home_skinTypeBtn:
+            // 연령대 별 버튼
+            case R.id.home_ageBtn:
+                // 랭킹 화면으로 이동
+                ((HomeActivity)getActivity()).replaceFragment(1);
+
                 break;
 
             // 브랜드 별 버튼
@@ -88,16 +97,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
                 break;
 
-            // 피부타입 별 버튼
-            case R.id.home_skinTypeBtn:
-                break;
-
-            // 연령대 별 버튼
-            case R.id.home_ageBtn:
-                break;
-
             // 제품 추가 버튼
             case R.id.home_addCosmeticBtn:
+                // 제춤 추가 화면으로 이동
+                intent = new Intent(getActivity(), AddCosmeticActivity.class);
+
+                startActivity(intent);
+
                 break;
         }
     }

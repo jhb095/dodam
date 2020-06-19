@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginBottom="10dp"
+        android:background="#f3f3f3">
+    </ImageView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="left|center">
+
+        <ImageView
+            android:id="@+id/reviewItem_profileIV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/circle">
+        </ImageView>
+
+        <LinearLayout
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/reviewItem_userNameTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="유저 이름"
+                android:textSize="14dp"
+                android:textColor="#000000">
+            </TextView>
+
+            <TextView
+                android:id="@+id/reviewItem_userInfoTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="유저 정보"
+                android:textSize="12dp"
+                android:textColor="#000000">
+            </TextView>
+
+            <TextView
+                android:id="@+id/reviewItem_writeDateTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="작성일"
+                android:textSize="12dp"
+                android:textColor="#000000">
+            </TextView>
+        </LinearLayout>
+
+        <RatingBar
+            android:id="@+id/reviewItem_rate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/PinkRatingBar"
+            android:numStars="5"
+            android:isIndicator="true">
+        </RatingBar>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/reviewItem_contentTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="리뷰 내용"
+        android:textSize="14dp"
+        android:textColor="#000000">
+    </TextView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal"
+        android:gravity="right">
+        
+        <ImageView
+            android:id="@+id/reviewItem_likeIV"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@drawable/icon_like">
+        </ImageView>
+
+        <TextView
+            android:id="@+id/reviewItem_likeCountTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_marginLeft="5dp"
+            android:text="0"
+            android:textSize="13dp"
+            android:textColor="#ef889a">
+        </TextView>
+
+        <ImageView
+            android:id="@+id/reviewItem_dislikeIV"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/icon_dislike">
+        </ImageView>
+
+        <TextView
+            android:id="@+id/reviewItem_dislikeCountTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_marginLeft="5dp"
+            android:text="0"
+            android:textSize="13dp"
+            android:textColor="#ef889a">
+        </TextView>
+    </LinearLayout>
+</LinearLayout>
