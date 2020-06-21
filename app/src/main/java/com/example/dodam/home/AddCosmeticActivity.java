@@ -168,6 +168,9 @@ public class AddCosmeticActivity extends AppCompatActivity implements View.OnCli
 
     // 추출한 성분 RecyclerView에 추가
     private void addIngredientsToRecyclerView() {
+        // 먼저 초기화
+        ingredientItemRVAdapter.delAllItem();
+
         // 성분 하나씩 뽑아서 추가
         for(String ingredient : ingredients) {
             IngredientItemData ingredientItemData;
@@ -393,13 +396,21 @@ public class AddCosmeticActivity extends AppCompatActivity implements View.OnCli
                     // 브랜드 및 제품명 선택
                     selectBrandAndCosmeticName(lineTexts);
                 } else if (requestCode == REQUEST_CAPTURE_INGREDENT) {
-                    // 성분 명 때
+                    // 성분 명 촬영 때
                     for(FirebaseVisionText.TextBlock block : firebaseVisionText.getTextBlocks()) {
                         String blockText;
                         String preText, postText;
                         int index, nextIndex;
 
                         blockText = block.getText();
+
+                        // '전성분'이 안보이면 다음 블록으로
+                        if(!blockText.contains("전성분")) {
+                            continue;
+                        }
+
+                        System.out.println("원본");
+                        System.out.println(blockText);
 
                         // 먼저 블록단위로 '('로 시작해서 ')'로 끝나는 부분 전부 제거
                         while((index = blockText.indexOf('(')) != -1) {
@@ -445,10 +456,13 @@ public class AddCosmeticActivity extends AppCompatActivity implements View.OnCli
                         // 마지막 항목 넣기
                         ingredients.add(blockText);
 
+                        System.out.println("추출");
+
                         // 문자열 안에 줄넘김 및 공백 제거하기
                         for(int i = 0; i < ingredients.size(); i++) {
                             // 줄넘김 및 공백 제거
                             ingredients.set(i, ingredients.get(i).replaceAll("(\n| )", ""));
+                            System.out.println(ingredients.get(i));
                         }
 
                         // RecyclerView에 추가
