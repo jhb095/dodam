@@ -1,5 +1,5 @@
 package com.example.dodam.database;
 
-public interface FirebaseCallback<T> {
+public interface Callback<T> {
     void onCallback(T data);
 }

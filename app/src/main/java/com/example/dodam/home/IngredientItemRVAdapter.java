@@ -81,8 +81,8 @@ public class IngredientItemRVAdapter extends RecyclerView.Adapter<IngredientItem
 
                     pos = getAdapterPosition();
 
-                    // listener 객체의 메서드 호출
-                    if(pos != RecyclerView.NO_POSITION) {
+                    // listener 객체가 null이 아닐때 메서드 호출
+                    if(pos != RecyclerView.NO_POSITION && mListener != null) {
                         mListener.onItemClick(v, pos);
                     }
                 }

@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.example.dodam.data.Constant;
 import com.example.dodam.data.DataManagement;
+import com.example.dodam.data.IngredientItem;
 import com.example.dodam.data.UserData;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -20,9 +21,6 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.HashMap;
-import java.util.Map;
 
 // 데이터베이스 전반적인 것을 다루는 클래스(싱글톤)
 public class DatabaseManagement {
@@ -42,7 +40,7 @@ public class DatabaseManagement {
     }
 
     // 로그인 이메일 확인
-    public void signInEmail(final Activity activity, final String email, String password, final FirebaseCallback<Boolean> callback) {
+    public void signInEmail(final Activity activity, final String email, String password, final Callback<Boolean> callback) {
         firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
                     // 작업 완료시
@@ -51,7 +49,7 @@ public class DatabaseManagement {
                         // 이메일 로그인 성공
                         if(task.isSuccessful()) {
                             // DB에서 유저데이터 가져오기
-                            getUserDataFromDatabase(email, new FirebaseCallback<UserData>() {
+                            getUserDataFromDatabase(email, new Callback<UserData>() {
                                 @Override
                                 public void onCallback(UserData data) {
                                     // 유저데이터를 성공적으로 가져왔을 때
@@ -75,7 +73,7 @@ public class DatabaseManagement {
     }
 
     // DB에서 유저 정보 가져오기(콜백으로 처리)
-    private void getUserDataFromDatabase(String email, final FirebaseCallback<UserData> callback) {
+    private void getUserDataFromDatabase(String email, final Callback<UserData> callback) {
         DocumentReference userRef;
 
         userRef = database.collection(Constant.DB_COLLECTION_USERS).document(email);
@@ -124,7 +122,7 @@ public class DatabaseManagement {
 
     // DB에 사용자 등록
     public void addUserToDatabase(UserData user) {
-        CollectionReference userRef, testRef;
+        CollectionReference userRef;
 
         // user에 id값이 없으면 넣어줘야 한다.
         if(user.getId() == null) {
@@ -148,4 +146,25 @@ public class DatabaseManagement {
                     }
                 });
     }
+/*
+    화장품에 들어가는 성분 DB 등록용
+    public void addIngredientToDatabase(IngredientItem ingredientItem) {
+        CollectionReference ingredientRef;
+
+        ingredientRef = database.collection(Constant.DB_COLLECTION_INGREDIENTS);
+        ingredientRef.document(ingredientItem.getName_ko())
+                .set(ingredientItem)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        System.out.println("디비 실패");
+                    }
+                });
+    }
+ */
 }

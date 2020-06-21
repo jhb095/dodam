@@ -10,8 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.dodam.R;
+import com.example.dodam.database.Callback;
 import com.example.dodam.database.DatabaseManagement;
-import com.example.dodam.database.FirebaseCallback;
 import com.example.dodam.home.HomeActivity;
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
@@ -63,7 +63,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         // 로그인 인증하기
         DatabaseManagement.getInstance().signInEmail(this, emailET.getText().toString(), passwordET.getText().toString()
-                , new FirebaseCallback<Boolean>() {
+                , new Callback<Boolean>() {
                     @Override
                     public void onCallback(Boolean data) {
                         // 로그인 작업 성공

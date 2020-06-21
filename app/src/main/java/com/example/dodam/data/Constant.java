@@ -4,6 +4,7 @@ package com.example.dodam.data;
 public interface Constant {
     // 데이터베이스
     String DB_COLLECTION_USERS = "users";
+    String DB_COLLECTION_INGREDIENTS = "ingredients";
 
     // 성별
     boolean MALE    = false;
