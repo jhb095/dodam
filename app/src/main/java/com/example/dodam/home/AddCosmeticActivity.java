@@ -7,6 +7,7 @@ import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -19,14 +20,18 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.dodam.R;
+import com.example.dodam.data.CosmeticRankItemData;
 import com.example.dodam.data.IngredientItem;
 import com.example.dodam.data.IngredientItemData;
 import com.example.dodam.database.Callback;
+import com.example.dodam.database.DatabaseManagement;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.ml.vision.FirebaseVision;
@@ -63,7 +68,7 @@ public class AddCosmeticActivity extends AppCompatActivity implements View.OnCli
     private final int REQUEST_CAPTURE_INGREDENT = 2;
     private final int REQUEST_CAPTURE_CROP = 3;
     private String currentPhotoPath;
-    private Bitmap cosmeticBitmap;  // 제품 사진 Bitmap
+    private Bitmap cosmeticBitmap = null;  // 제품 사진 Bitmap
     private String selectedTexts;   // Dialog에서 선택한 문자열
     private ArrayList<String> ingredients;  // 추출한 성분
 
@@ -127,6 +132,7 @@ public class AddCosmeticActivity extends AppCompatActivity implements View.OnCli
     private void initialize() {
         initializeImageView();
         initializeButton();
+        initializeEditText();
         initializeRecyclerView();
 
         //parsingAsyncTask asyncTask = new parsingAsyncTask();
@@ -155,6 +161,21 @@ public class AddCosmeticActivity extends AppCompatActivity implements View.OnCli
         captureIngredientBtn.setOnClickListener(this);
     }
 
+    // EditText 초기화
+    private void initializeEditText() {
+        EditText brandNameET, cosmeticNameET;
+
+        brandNameET = findViewById(R.id.addCosmetic_brandNameET);
+        cosmeticNameET = findViewById(R.id.addCosmetic_cosmeticNameET);
+
+        // 비활성화
+        brandNameET.setClickable(false);
+        brandNameET.setFocusable(false);
+
+        cosmeticNameET.setClickable(false);
+        cosmeticNameET.setFocusable(false);
+    }
+
     // RecyclerView 초기화
     private void initializeRecyclerView() {
         ingredientRV = findViewById(R.id.addCosmetic_ingredientRV);
@@ -162,6 +183,49 @@ public class AddCosmeticActivity extends AppCompatActivity implements View.OnCli
         ingredientRV.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
         ingredientItemRVAdapter = new IngredientItemRVAdapter();
+
+        ingredientItemRVAdapter.setOnItemClickListener(new IngredientItemRVAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View v, final int pos) {
+                final IngredientItemData ingredientItemData;
+
+                ingredientItemData = ingredientItemRVAdapter.getItem(pos);
+
+                // DB에 존재하지 않는 성분일 때만
+                if(!ingredientItemData.getIsExist()) {
+                    // 해당 성분 변경 Dialog 띄우기
+                    AlertDialog.Builder builder;
+                    AlertDialog alertDialog;
+                    View dialogView;
+                    TextView ingredientNameTV;
+                    final EditText ingredientNameET;
+
+                    builder = new AlertDialog.Builder(v.getContext());
+
+                    dialogView = getLayoutInflater().inflate(R.layout.input_dialog, null);
+                    ingredientNameTV = dialogView.findViewById(R.id.inputDialog_ingredientNameTV);
+                    ingredientNameET = dialogView.findViewById(R.id.inputDialog_ingredientNameET);
+
+                    ingredientNameTV.setText(ingredientItemData.getIngredientName());
+
+                    builder.setView(dialogView);
+                    builder.setTitle("성분 명 변경");
+
+                    builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ingredientItemRVAdapter.getItem(pos).setIngredientName(ingredientNameET.getText().toString());
+                            ingredientItemRVAdapter.getItem(pos).setIsExist(true);
+
+                            ingredientItemRVAdapter.notifyDataSetChanged();
+                        }
+                    });
+
+                    alertDialog = builder.create();
+                    alertDialog.show();
+                }
+            }
+        });
 
         ingredientRV.setAdapter(ingredientItemRVAdapter);
     }
@@ -173,37 +237,59 @@ public class AddCosmeticActivity extends AppCompatActivity implements View.OnCli
 
         // 성분 하나씩 뽑아서 추가
         for(String ingredient : ingredients) {
-            IngredientItemData ingredientItemData;
+            final IngredientItemData ingredientItemData;
 
             ingredientItemData = new IngredientItemData();
 
             ingredientItemData.setIngredientName(ingredient);
 
-            ingredientItemRVAdapter.addItem(ingredientItemData);
-        }
+            // DB에 존재하는 성분인지 확인
+            DatabaseManagement.getInstance().isExistIngredientFromDatabase(ingredient, new Callback<Boolean>() {
+                @Override
+                public void onCallback(Boolean data) {
+                    // 존재하지 않는 성분
+                    if(!data) {
+                        ingredientItemData.setIngredientName(ingredientItemData.getIngredientName() + "(성분이 정확하지 않으니 클릭하여 수정해주세요.)");
+                        ingredientItemData.setIsExist(false);
+                    } else {
+                        // 존재 하는 성분
+                        ingredientItemData.setIsExist(true);
+                    }
 
-        // 변경됬음을 표시
-        ingredientItemRVAdapter.notifyDataSetChanged();
+                    ingredientItemRVAdapter.addItem(ingredientItemData);
+
+                    // 변경됬음을 표시
+                    ingredientItemRVAdapter.notifyDataSetChanged();
+                }
+            });
+        }
     }
 
     // 브랜드 명 및 제품 명 EditText 사용 가능하게
     private void setUsableBrandAndCosmeticName() {
         EditText brandNameET, cosmeticNameET;
+        InputMethodManager imm;
 
         brandNameET = findViewById(R.id.addCosmetic_brandNameET);
         cosmeticNameET = findViewById(R.id.addCosmetic_cosmeticNameET);
 
-        brandNameET.setCursorVisible(true);
+        // 활성화
+        brandNameET.setFocusableInTouchMode(true);
         brandNameET.setFocusable(true);
 
-        cosmeticNameET.setCursorVisible(true);
+        cosmeticNameET.setFocusableInTouchMode(true);
         cosmeticNameET.setFocusable(true);
-
-        // 키보드가 화면 가리는 현상 방지
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         // 브랜드 명에 포커스주기
         brandNameET.requestFocus();
+
+        // 키보드가 화면 가리는 현상 방지
+        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
+        imm = (InputMethodManager)getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(brandNameET, 0);
     }
 
     @Override
@@ -217,6 +303,47 @@ public class AddCosmeticActivity extends AppCompatActivity implements View.OnCli
 
             // 완료
             case R.id.addCosmetic_completeBtn:
+                EditText brandNameET, cosmeticNameET;
+
+                // 제품 사진이 등록되었는지, 화장품 성분이 추가되었는지 확인
+                if(cosmeticBitmap != null && ingredientItemRVAdapter.getItemCount() != 0) {
+                    final String brandName, cosmeticName;
+
+                    brandNameET = findViewById(R.id.addCosmetic_brandNameET);
+                    cosmeticNameET = findViewById(R.id.addCosmetic_cosmeticNameET);
+
+                    brandName = brandNameET.getText().toString();
+                    cosmeticName = cosmeticNameET.getText().toString();
+
+                    // 브랜드 명과 제품 명이 등록되었는지 확인
+                    if(brandName != "" && cosmeticName != "" && brandName != "브랜드 명" && cosmeticName != "제품 명") {
+                        // Cloud Storage에 화장품 이미지 등록
+                        DatabaseManagement.getInstance().addCosmeticImageToDatabase(brandName, cosmeticName, cosmeticBitmap, new Callback<Uri>() {
+                            @Override
+                            public void onCallback(Uri data) {
+                                // 등록 성공시
+                                if(data != null) {
+                                    CosmeticRankItemData cosmeticRankItemData;
+
+                                    cosmeticRankItemData = new CosmeticRankItemData(brandName, cosmeticName);
+
+                                    // 유저가 올린 화장품 DB에 추가
+                                    DatabaseManagement.getInstance().addCosmeticToDatabase(cosmeticRankItemData, new Callback<Boolean>() {
+                                        @Override
+                                        public void onCallback(Boolean data) {
+                                            // 등록 성공시
+                                            if(data != null) {
+                                                // 메인 화면으로 가기
+                                                finish();
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                }
+
                 break;
 
             // 화장품 이미지 등록
@@ -502,6 +629,7 @@ public class AddCosmeticActivity extends AppCompatActivity implements View.OnCli
         });
 
         alertDialog = builder.create();
+        alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         alertDialog.show();
     }
 

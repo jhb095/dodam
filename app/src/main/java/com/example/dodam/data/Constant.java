@@ -5,6 +5,9 @@ public interface Constant {
     // 데이터베이스
     String DB_COLLECTION_USERS = "users";
     String DB_COLLECTION_INGREDIENTS = "ingredients";
+    String DB_COLLECTION_BRANDS = "brands";
+    String DB_COLLECTION_COSMETICS = "cosmetics";
+    String DB_FIELD_REGISTERCOSMETICS = "registerCosmetics";
 
     // 성별
     boolean MALE    = false;

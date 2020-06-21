@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/inputDialog_ingredientNameTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="26dp"
+            android:text="성분 명"
+            android:textColor = "#000000"
+            android:textSize = "15dp"/>
+
+        <EditText
+            android:id="@+id/inputDialog_ingredientNameET"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="26dp"
+            android:inputType="textNoSuggestions"
+            android:ems="10"
+            android:text="" />
+    </LinearLayout>
+</LinearLayout>

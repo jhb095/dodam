@@ -101,12 +101,11 @@
                 android:layout_marginTop="10dp"
                 android:background="@null"
                 android:hint="브랜드 명"
+                android:singleLine="true"
                 android:textColorHint="#6a6a6a"
                 android:textColor="#6a6a6a"
                 android:textSize="13dp"
                 android:textStyle="bold"
-                android:cursorVisible="false"
-                android:focusable="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/addCosmetic_addCosmeticImageIV" />
@@ -117,12 +116,11 @@
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:hint="제품 명"
+                android:singleLine="true"
                 android:textColorHint="#000000"
                 android:textColor="#000000"
                 android:textSize="13dp"
                 android:textStyle="bold"
-                android:cursorVisible="false"
-                android:focusable="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/addCosmetic_brandNameET"/>
@@ -191,8 +189,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/addCosmetic_ingredientRV"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="10dp">
+            android:layout_height="match_parent">
         </androidx.recyclerview.widget.RecyclerView>
     </LinearLayout>
 </LinearLayout>

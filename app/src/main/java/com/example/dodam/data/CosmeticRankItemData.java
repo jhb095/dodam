@@ -1,10 +1,34 @@
 package com.example.dodam.data;
 
 public class CosmeticRankItemData {
-    private int rank;               // 순위
+    private String cosmeticId;      // 화장품 식별자(사용자가 올린 게시물 식별자)
+    private int rank;               // 순위(별점을 토대로 설정)
     private String brandName;       // 브랜드 명
     private String cosmeticName;    // 화장품 명
     private Double rate;            // 별점
+
+    // 기본 생성자(Firebase 때문)
+    public CosmeticRankItemData() {
+
+    }
+
+    public CosmeticRankItemData(String brandName, String cosmeticName) {
+        this.brandName = brandName;
+        this.cosmeticName = cosmeticName;
+
+        rank = 0;
+        rate = 0.;
+    }
+
+    // 화장품 식별자 설정
+    public void setCosmeticId(String cosmeticId) {
+        this.cosmeticId = cosmeticId;
+    }
+
+    // 화장품 식별자 가져오기
+    public String getCosmeticId() {
+        return cosmeticId;
+    }
 
     // 순위 설정
     public void setRank(int rank) {

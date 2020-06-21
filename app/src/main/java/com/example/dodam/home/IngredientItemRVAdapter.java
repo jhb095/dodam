@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -81,8 +82,7 @@ public class IngredientItemRVAdapter extends RecyclerView.Adapter<IngredientItem
 
                     pos = getAdapterPosition();
 
-                    // listener 객체가 null이 아닐때 메서드 호출
-                    if(pos != RecyclerView.NO_POSITION && mListener != null) {
+                    if (pos != RecyclerView.NO_POSITION) {
                         mListener.onItemClick(v, pos);
                     }
                 }

@@ -3,6 +3,7 @@ package com.example.dodam.data;
 import com.example.dodam.database.DatabaseManagement;
 
 import java.util.Calendar;
+import java.util.List;
 
 public class UserData {
     private String  id;          // 사용자 id(DB상 고유 사용자 번호)
@@ -14,6 +15,7 @@ public class UserData {
     private String     skinType1;    // 사용자 피부타입1(지성, 건성)
     private String     skinType2;    // 사용자 피부타입2(민감성, 저항성)
     private String  signUpDate;  // 사용자 가입날짜
+    private List<String> registerCosmetics;   // 사용자가 등록한 화장품들(화장품 식별자)
 
     // 기본 생성자(Firebase)
     public UserData() {
@@ -88,6 +90,11 @@ public class UserData {
     // 사용자 피부타입(민감성, 저항성) 반환
     public String getSkinType2() {
         return skinType2;
+    }
+
+    // 사용자가 등록한 화장품들 반환
+    public List<String> getRegisterCosmetics() {
+        return registerCosmetics;
     }
 
     // 사용자 나이 설정
