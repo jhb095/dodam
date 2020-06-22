@@ -1,5 +1,8 @@
 package com.example.dodam.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CosmeticRankItemData {
     private String cosmeticId;      // 화장품 식별자(사용자가 올린 게시물 식별자)
     private int rank;               // 순위(별점을 토대로 설정)
@@ -7,16 +10,19 @@ public class CosmeticRankItemData {
     private String cosmeticName;    // 화장품 명
     private String category;        // 화장품 카테고리
     private Double rate;            // 별점
+    private List<IngredientItemData> ingredients;   // 화장품 성분 목록
 
     // 기본 생성자(Firebase 때문)
     public CosmeticRankItemData() {
-
+        ingredients = new ArrayList<>();
     }
 
     public CosmeticRankItemData(String brandName, String cosmeticName, String category) {
         this.brandName = brandName;
         this.cosmeticName = cosmeticName;
         this.category = category;
+
+        ingredients = new ArrayList<>();
 
         rank = 0;
         rate = 0.;
@@ -80,5 +86,20 @@ public class CosmeticRankItemData {
     // 별점 반환
     public Double getRate() {
         return rate;
+    }
+
+    // 화장품 성분 목록 설정
+    public void setIngredients(List<IngredientItemData> ingredients) {
+        this.ingredients = ingredients;
+    }
+
+    // 화장품 성분 목록 반환
+    public List<IngredientItemData> getIngredients() {
+        return ingredients;
+    }
+
+    // 화장품 성분 추가
+    public void addIngredient(IngredientItemData ingredientItemData) {
+        ingredients.add(ingredientItemData);
     }
 }

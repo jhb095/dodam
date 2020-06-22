@@ -334,7 +334,16 @@ public class AddCosmeticActivity extends AppCompatActivity implements View.OnCli
 
                                     cosmeticRankItemData = new CosmeticRankItemData(brandName, cosmeticName, cosmeticCategoryTV.getText().toString());
 
-                                    // 유저가 올린 화장품 DB에 추가
+                                    // DB에 등록할 화장품에 추출한 성분들 등록하기
+                                    for(int i = 0; i < ingredientItemRVAdapter.getItemCount(); i++) {
+                                        IngredientItemData item;
+
+                                        item = ingredientItemRVAdapter.getItem(i);
+
+                                        cosmeticRankItemData.addIngredient(item);
+                                    }
+
+                                    // DB에 화장품 추가
                                     DatabaseManagement.getInstance().addCosmeticToDatabase(cosmeticRankItemData, new Callback<Boolean>() {
                                         @Override
                                         public void onCallback(Boolean data) {
