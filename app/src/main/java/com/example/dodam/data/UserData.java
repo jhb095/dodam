@@ -2,6 +2,7 @@ package com.example.dodam.data;
 
 import com.example.dodam.database.DatabaseManagement;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class UserData {
 
     // 기본 생성자(Firebase)
     public UserData() {
+        registerCosmetics = new ArrayList<String>();
     }
 
     // 생성자
@@ -140,6 +142,11 @@ public class UserData {
     // 사용자 피부타입(민감성, 저항성) 설정
     public void setSkinType2(String skinType2) {
         this.skinType2 = skinType2;
+    }
+
+    // 사용자가 등록한 화장품 목록 설정
+    public void setRegisterCosmetics(List<String> registerCosmetics) {
+        this.registerCosmetics = registerCosmetics;
     }
 
     // 생년월일로부터 나이 구하기

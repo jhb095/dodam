@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.dodam.R;
+import com.example.dodam.data.Constant;
 import com.example.dodam.data.CosmeticRankItemData;
 import com.example.dodam.data.IngredientItem;
 import com.example.dodam.data.IngredientItemData;
@@ -241,6 +242,9 @@ public class AddCosmeticActivity extends AppCompatActivity implements View.OnCli
 
             ingredientItemData = new IngredientItemData();
 
+            // '/' 가 포함되어있으면 '.'로 대체
+            ingredient = ingredient.replaceAll("/", ".");
+
             ingredientItemData.setIngredientName(ingredient);
 
             // DB에 존재하는 성분인지 확인
@@ -324,8 +328,11 @@ public class AddCosmeticActivity extends AppCompatActivity implements View.OnCli
                                 // 등록 성공시
                                 if(data != null) {
                                     CosmeticRankItemData cosmeticRankItemData;
+                                    TextView cosmeticCategoryTV;
 
-                                    cosmeticRankItemData = new CosmeticRankItemData(brandName, cosmeticName);
+                                    cosmeticCategoryTV = findViewById(R.id.addCosmetic_cosmeticCategoryTV);
+
+                                    cosmeticRankItemData = new CosmeticRankItemData(brandName, cosmeticName, cosmeticCategoryTV.getText().toString());
 
                                     // 유저가 올린 화장품 DB에 추가
                                     DatabaseManagement.getInstance().addCosmeticToDatabase(cosmeticRankItemData, new Callback<Boolean>() {
@@ -393,13 +400,11 @@ public class AddCosmeticActivity extends AppCompatActivity implements View.OnCli
         // 요청이 성공
         if(resultCode == RESULT_OK) {
             // 카메라 요청에 대한 응답일 때
-            if (requestCode == REQUEST_CAPTURE_IMAGE || requestCode == REQUEST_CAPTURE_INGREDENT) {
+            if (requestCode == REQUEST_CAPTURE_IMAGE) {
                 ImageDecoder.Source source;
                 ImageView addCosmeticIV;
                 File file;
 
-                cosmeticBitmap = null;
-
                 file = new File(currentPhotoPath);
 
                 try {
@@ -413,44 +418,45 @@ public class AddCosmeticActivity extends AppCompatActivity implements View.OnCli
                     e.printStackTrace();
                 }
 
-                // 제품 촬영 때
-                if(requestCode == REQUEST_CAPTURE_IMAGE) {
-                    // 브랜드 명과 제품 명을 직접 입력할 건지 선택 Dialog 띄우기
-                    showChoiceInputDialog();
+                // 브랜드 명과 제품 명을 직접 입력할 건지 선택 Dialog 띄우기
+                showChoiceInputDialog();
 
-                    addCosmeticIV = findViewById(R.id.addCosmetic_addCosmeticImageIV);
+                addCosmeticIV = findViewById(R.id.addCosmetic_addCosmeticImageIV);
 
-                    addCosmeticIV.setImageBitmap(cosmeticBitmap);
-                } else if(requestCode == REQUEST_CAPTURE_INGREDENT) {
-                    // 성분 촬영
-                    cropImage(file);
-                }
-            } else if(requestCode == REQUEST_CAPTURE_CROP) {
+                addCosmeticIV.setImageBitmap(cosmeticBitmap);
+            } else if(requestCode == REQUEST_CAPTURE_INGREDENT || requestCode == REQUEST_CAPTURE_CROP) {
                 File file;
                 ImageDecoder.Source source;
+                Bitmap ingredientBitmap;
 
-                cosmeticBitmap = null;
+                ingredientBitmap = null;
 
                 file = new File(currentPhotoPath);
 
                 try {
                     if (Build.VERSION.SDK_INT < 28) {
-                        cosmeticBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.fromFile(file));
+                        ingredientBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.fromFile(file));
                     } else {
                         source = ImageDecoder.createSource(this.getContentResolver(), Uri.fromFile(file));
-                        cosmeticBitmap = ImageDecoder.decodeBitmap(source);
+                        ingredientBitmap = ImageDecoder.decodeBitmap(source);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
-                analysisBitmap(cosmeticBitmap, REQUEST_CAPTURE_INGREDENT);
+                // CROP 일 때
+                if(requestCode == REQUEST_CAPTURE_CROP) {
+                    analysisBitmap(ingredientBitmap, REQUEST_CAPTURE_INGREDENT);
+                } else {
+                    // 성분 촬영 때
+                    cropImage(file, ingredientBitmap);
+                }
             }
         }
     }
 
     // Crop 요청
-    private void cropImage(File file) {
+    private void cropImage(File file, Bitmap ingredientBitmap) {
         Intent intent;
         Uri photoUri;
 
@@ -460,8 +466,8 @@ public class AddCosmeticActivity extends AppCompatActivity implements View.OnCli
 
         intent.setDataAndType(photoUri, "image/*");
 
-        intent.putExtra("outputX", cosmeticBitmap.getWidth());
-        intent.putExtra("outputY", cosmeticBitmap.getHeight());
+        intent.putExtra("outputX", ingredientBitmap.getWidth());
+        intent.putExtra("outputY", ingredientBitmap.getHeight());
         intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
 
         // Uri 접근에 대한 권한 승인
@@ -605,32 +611,76 @@ public class AddCosmeticActivity extends AppCompatActivity implements View.OnCli
         });
     }
 
-    // 브랜드 명과 제품 명을 인식으로 추출할 건지 직접 입력할 건지 Dialog 띄우기
-    private void showChoiceInputDialog() {
+    // 화장품 카테고리 선택 Dialog 띄우기
+    private void showChoiceCategoryDialog(final Callback<Boolean> callback) {
         AlertDialog.Builder builder;
         AlertDialog alertDialog;
-        String[] items = {"사진에서 추출", "직접 입력"};
+        final String[] categoryItems = {Constant.CATEGORY_SKINCARE, Constant.CATEGORY_CLEANSING, Constant.CATEGORY_MASKANDPACK
+                , Constant.CATEGORY_SUNCARE, Constant.CATEGORY_BASE};
+        final ArrayList<String> selectedItem;
 
+        // 카테고리 먼저 선택
         builder = new AlertDialog.Builder(this);
 
-        builder.setTitle("브랜드 및 제품 명 입력");
+        selectedItem = new ArrayList<String>();
 
-        builder.setItems(items, new DialogInterface.OnClickListener() {
+        builder.setTitle("화장품 카테고리 선택");
+        builder.setSingleChoiceItems(categoryItems, 0, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // 사진에서 추출
-                if(which == 0) {
-                    analysisBitmap(cosmeticBitmap, REQUEST_CAPTURE_IMAGE);
-                } else {
-                    // EditText 입력 가능하게 하고 포커스 맞추기
-                    setUsableBrandAndCosmeticName();
-                }
+                selectedItem.clear();
+                selectedItem.add(categoryItems[which]);
+            }
+        }).setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                TextView cosmeticCategoryTV;
+
+                cosmeticCategoryTV = findViewById(R.id.addCosmetic_cosmeticCategoryTV);
+                cosmeticCategoryTV.setText(selectedItem.get(0));
+
+                callback.onCallback(true);
             }
         });
 
         alertDialog = builder.create();
-        alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         alertDialog.show();
+    }
+
+    // 브랜드 명과 제품 명을 인식으로 추출할 건지 직접 입력할 건지 Dialog 띄우기
+    private void showChoiceInputDialog() {
+        final AlertDialog.Builder builder;
+
+        builder = new AlertDialog.Builder(this);
+        // 카테고리 선택 Dialog 띄우기
+        showChoiceCategoryDialog(new Callback<Boolean>() {
+            @Override
+            public void onCallback(Boolean data) {
+                // 정상적으로 처리됬을 때
+                if(data) {
+                    AlertDialog alertDialog;
+                    String[] items = {"사진에서 추출", "직접 입력"};
+
+                    builder.setTitle("브랜드 및 제품 명 입력");
+
+                    builder.setItems(items, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // 사진에서 추출
+                            if(which == 0) {
+                                analysisBitmap(cosmeticBitmap, REQUEST_CAPTURE_IMAGE);
+                            } else {
+                                // EditText 입력 가능하게 하고 포커스 맞추기
+                                setUsableBrandAndCosmeticName();
+                            }
+                        }
+                    });
+
+                    alertDialog = builder.create();
+                    alertDialog.show();
+                }
+            }
+        });
     }
 
     // 선택형 Dialog 띄우기

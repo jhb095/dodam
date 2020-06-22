@@ -6,8 +6,8 @@ public interface Constant {
     String DB_COLLECTION_USERS = "users";
     String DB_COLLECTION_INGREDIENTS = "ingredients";
     String DB_COLLECTION_BRANDS = "brands";
-    String DB_COLLECTION_COSMETICS = "cosmetics";
     String DB_FIELD_REGISTERCOSMETICS = "registerCosmetics";
+    String DB_FILED_COSMETICS = "cosmetics";
 
     // 성별
     boolean MALE    = false;
@@ -27,4 +27,11 @@ public interface Constant {
     String SKIN_WEAK_SENSITIVE = "약민감성";
     String SKIN_WEAK_RESISTANT = "약저항성";
     String SKIN_RESISTANT      = "저항성";
+
+    // 화장품 카테고리 관련
+    String CATEGORY_SKINCARE    = "스킨케어";
+    String CATEGORY_CLEANSING   = "클렌징";
+    String CATEGORY_MASKANDPACK = "마스크/팩";
+    String CATEGORY_SUNCARE     = "선케어";
+    String CATEGORY_BASE        = "베이스";
 }

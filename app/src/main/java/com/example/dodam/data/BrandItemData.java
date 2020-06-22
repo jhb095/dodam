@@ -4,6 +4,10 @@ public class BrandItemData {
     private int rank;               // 순위
     private String brandName;       // 브랜드 명
 
+    // Firebase
+    public BrandItemData() {
+    }
+
     // 순위 설정
     public void setRank(int rank) {
         this.rank = rank;
@@ -15,7 +19,7 @@ public class BrandItemData {
     }
 
     // 브랜드 명 설정
-    public void setBrandName(String branName) {
+    public void setBrandName(String brandName) {
         this.brandName = brandName;
     }
 

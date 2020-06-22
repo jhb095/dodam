@@ -97,7 +97,7 @@ public class CosmeticRankItemRVAdapter extends RecyclerView.Adapter<CosmeticRank
         }
 
         void onBind(CosmeticRankItemData data) {
-            rankTV.setText(data.getRank());
+            rankTV.setText(String.valueOf(data.getRank()));
             brandNameTV.setText(data.getBrandName());
             cosmeticNameTV.setText(data.getCosmeticName());
             rateTV.setText(Double.toString(data.getRate()));

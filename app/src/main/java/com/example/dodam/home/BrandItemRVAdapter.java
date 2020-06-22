@@ -94,7 +94,7 @@ public class BrandItemRVAdapter extends RecyclerView.Adapter<BrandItemRVAdapter.
         }
 
         void onBind(BrandItemData data) {
-            rankTV.setText(data.getRank());
+            rankTV.setText(String.valueOf(data.getRank()));
             brandNameTV.setText(data.getBrandName());
         }
     }

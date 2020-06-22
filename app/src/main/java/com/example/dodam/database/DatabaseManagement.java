@@ -7,6 +7,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.dodam.data.BrandCosmeticItems;
+import com.example.dodam.data.BrandItemData;
 import com.example.dodam.data.Constant;
 import com.example.dodam.data.CosmeticRankItemData;
 import com.example.dodam.data.DataManagement;
@@ -25,11 +27,18 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 // 데이터베이스 전반적인 것을 다루는 클래스(싱글톤)
 public class DatabaseManagement {
@@ -94,7 +103,7 @@ public class DatabaseManagement {
 
                         user = documentSnapshot.toObject(UserData.class);
 
-                        callback.onCallback(documentSnapshot.toObject(UserData.class));
+                        callback.onCallback(user);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -224,36 +233,117 @@ public class DatabaseManagement {
 
     // DB에 화장품 등록
     public void addCosmeticToDatabase(final CosmeticRankItemData cosmeticRankItemData, final Callback<Boolean> callback) {
-        final CollectionReference brandRef;
-
-        brandRef = database.collection(Constant.DB_COLLECTION_BRANDS).document(cosmeticRankItemData.getBrandName())
-                .collection(cosmeticRankItemData.getCosmeticName());
-
-        brandRef.add(cosmeticRankItemData).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+        getBrandCosmeticsFromDatabase(cosmeticRankItemData.getBrandName(), new Callback<List<CosmeticRankItemData>>() {
             @Override
-            public void onSuccess(final DocumentReference documentReference) {
-                cosmeticRankItemData.setCosmeticId(documentReference.getId());
+            public void onCallback(List<CosmeticRankItemData> data) {
+                DocumentReference brandRef;
+                BrandCosmeticItems brandCosmeticItems;
+                final UserData userData;
 
-                // 다시 업데이트
-                documentReference.update("cosmeticId", documentReference.getId()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                brandCosmeticItems = new BrandCosmeticItems();
+
+                if(data != null) {
+                    brandCosmeticItems.setCosmetics(data);
+                }
+
+                userData = DataManagement.getInstance().getUserData();
+
+                // 화장품 Id는 브랜드 명 + "_" + 제품 명 + "_" + 유저Id
+                cosmeticRankItemData.setCosmeticId(cosmeticRankItemData.getBrandName() + "_" + cosmeticRankItemData.getCosmeticName() + "_" + userData.getId());
+
+                brandCosmeticItems.getCosmetics().add(cosmeticRankItemData);
+
+                brandRef = database.collection(Constant.DB_COLLECTION_BRANDS)
+                        .document(cosmeticRankItemData.getBrandName());
+
+                //brandRef.set(cosmetic)
+                brandRef.set(brandCosmeticItems)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                // 작업 성공시
+                                if(task.isSuccessful()) {
+                                    DocumentReference userRef;
+
+                                    userData.getRegisterCosmetics().add(cosmeticRankItemData.getCosmeticId());
+
+                                    // 유저 데이터 업데이트
+                                    userRef = database.collection(Constant.DB_COLLECTION_USERS).document(userData.getEmail());
+                                    userRef.update(Constant.DB_FIELD_REGISTERCOSMETICS, userData.getRegisterCosmetics());
+
+                                    callback.onCallback(true);
+                                } else {
+                                    callback.onCallback(false);
+                                }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
                     @Override
-                    public void onSuccess(Void aVoid) {
-                        DocumentReference userRef;
-
-                        // 유저정보에도 업데이트
-                        userRef = database.collection(Constant.DB_COLLECTION_USERS).document(DataManagement.getInstance().getUserData().getEmail());
-                        userRef.update(Constant.DB_FIELD_REGISTERCOSMETICS, documentReference.getId());
-
-                        callback.onCallback(true);
+                    public void onFailure(@NonNull Exception e) {
+                        callback.onCallback(false);
                     }
                 });
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                callback.onCallback(false);
-            }
         });
+    }
+
+    // DB로부터 브랜드 목록 가져오기
+    public void getBrandsFromDatabase(final Callback<ArrayList<BrandItemData>> callback) {
+        CollectionReference brandRef;
+
+        brandRef = database.collection(Constant.DB_COLLECTION_BRANDS);
+        brandRef.get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        // 작업 성공시
+                        if(task.isSuccessful()) {
+                            ArrayList<BrandItemData> brandItems;
+
+                            brandItems = new ArrayList<>();
+
+                            // 한 항목씩 뽑아서 추가
+                            for(QueryDocumentSnapshot document : task.getResult()) {
+                                BrandItemData brandItem;
+
+                                brandItem = new BrandItemData();
+                                brandItem.setBrandName(document.getId());
+
+                                brandItems.add(brandItem);
+                            }
+
+                            callback.onCallback(brandItems);
+                        } else {
+                            callback.onCallback(null);
+                        }
+                    }
+                });
+    }
+
+    // 해당 브랜드 제품 목록 가져오기
+    public void getBrandCosmeticsFromDatabase(String brandName, final Callback<List<CosmeticRankItemData>> callback) {
+        DocumentReference brandRef;
+
+        brandRef = database.collection(Constant.DB_COLLECTION_BRANDS).document(brandName);
+        brandRef.get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()) {
+                            DocumentSnapshot document;
+                            List<CosmeticRankItemData> brandCosmeticItems;
+
+                            document = task.getResult();
+
+                            if(document != null && document.exists()) {
+                                brandCosmeticItems = document.toObject(BrandCosmeticItems.class).getCosmetics();
+
+                                callback.onCallback(brandCosmeticItems);
+                            } else {
+                                callback.onCallback(null);
+                            }
+                        }
+                    }
+                });
     }
 
 /*

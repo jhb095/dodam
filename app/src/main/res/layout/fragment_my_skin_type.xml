@@ -52,7 +52,7 @@
 
         <Button
             android:id="@+id/mySkinType_goRecommendBtn"
-            android:layout_width="400dp"
+            android:layout_width="350dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
             android:background="@drawable/very_radius_rectangle"
