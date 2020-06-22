@@ -35,5 +35,7 @@
 
     <style name="PinkRatingBar" parent="@android:style/Widget.RatingBar">
         <item name="android:progressDrawable">@drawable/pink_ratingbar</item>
+        <item name="android:minHeight">28dp</item>
+        <item name="android:maxHeight">28dp</item>
     </style>
 </resources>

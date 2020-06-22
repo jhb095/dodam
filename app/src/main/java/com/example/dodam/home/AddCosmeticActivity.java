@@ -322,11 +322,11 @@ public class AddCosmeticActivity extends AppCompatActivity implements View.OnCli
                     // 브랜드 명과 제품 명이 등록되었는지 확인
                     if(brandName != "" && cosmeticName != "" && brandName != "브랜드 명" && cosmeticName != "제품 명") {
                         // Cloud Storage에 화장품 이미지 등록
-                        DatabaseManagement.getInstance().addCosmeticImageToDatabase(brandName, cosmeticName, cosmeticBitmap, new Callback<Uri>() {
+                        DatabaseManagement.getInstance().addCosmeticImageToDatabase(this, brandName, cosmeticName, cosmeticBitmap, new Callback<Boolean>() {
                             @Override
-                            public void onCallback(Uri data) {
+                            public void onCallback(Boolean data) {
                                 // 등록 성공시
-                                if(data != null) {
+                                if(data) {
                                     CosmeticRankItemData cosmeticRankItemData;
                                     TextView cosmeticCategoryTV;
 

@@ -1,12 +1,21 @@
 package com.example.dodam.database;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.dodam.R;
 import com.example.dodam.data.BrandCosmeticItems;
 import com.example.dodam.data.BrandItemData;
 import com.example.dodam.data.Constant;
@@ -31,6 +40,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -186,12 +197,30 @@ public class DatabaseManagement {
     }
 
     // Cloud Storage에 이미지 파일 등록
-    public void addCosmeticImageToDatabase(String brandName, String cosmeticName, Bitmap cosmeticBitmap, final Callback<Uri> callback) {
+    public void addCosmeticImageToDatabase(Context context, String brandName, String cosmeticName, Bitmap cosmeticBitmap, final Callback<Boolean> callback) {
         final StorageReference brandRef;
         ByteArrayOutputStream baos;
         byte[] data;
         UploadTask uploadTask;
-        Task<Uri> urlTask;
+        AlertDialog.Builder builder;
+        final AlertDialog alertDialog;
+        View dialogView;
+        final TextView progressTV;
+        LayoutInflater inflater;
+
+        builder = new AlertDialog.Builder(context);
+
+        inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        // Progress
+        dialogView = inflater.inflate(R.layout.progress_dialog, null);
+        progressTV = dialogView.findViewById(R.id.progressDialog_progressTV);
+
+        builder.setView(dialogView);
+        builder.setTitle("업로드 중");
+
+        alertDialog = builder.create();
+        alertDialog.show();
 
         // 브랜드 명 폴더에 화장품 명 이름으로 저장
         brandRef = FirebaseStorage.getInstance().getReference().child(Constant.DB_COLLECTION_BRANDS).child(brandName).child(cosmeticName + ".jpg");
@@ -205,28 +234,28 @@ public class DatabaseManagement {
 
         // 업로드할 data 담기
         uploadTask = brandRef.putBytes(data);
-
-        urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
-            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                // 실패시 예외 발생
-                if(!task.isSuccessful()) {
-                    throw task.getException();
-                }
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                alertDialog.dismiss();
 
-                // 다운로드 Url 반환
-                return brandRef.getDownloadUrl();
+                callback.onCallback(true);
             }
-        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+        }).addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onComplete(@NonNull Task<Uri> task) {
-                // 업로드 성공시
-                if(task.isSuccessful()) {
-                    callback.onCallback(task.getResult());
-                } else {
-                    // 실패시
-                    callback.onCallback(null);
-                }
+            public void onFailure(@NonNull Exception e) {
+                alertDialog.dismiss();
+
+                callback.onCallback(false);
+            }
+        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(@NonNull UploadTask.TaskSnapshot taskSnapshot) {
+                double progress;
+
+                progress = (100 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+
+                progressTV.setText(((int)progress) + "% 완료");
             }
         });
     }
@@ -343,6 +372,36 @@ public class DatabaseManagement {
                         }
                     }
                 });
+    }
+
+    // 화장품 제품의 이미지 가져오기
+    public void getCosmeticImageFromStorage(String brandName, String cosmeticName, final Callback<Uri> callback) {
+        FirebaseStorage storage;
+        StorageReference storageRef;
+
+        storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReferenceFromUrl("gs://dodam-a1823.appspot.com")
+                .child(Constant.DB_COLLECTION_BRANDS)
+                .child(brandName)
+                .child(cosmeticName + ".jpg");
+
+        storageRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if(task.isSuccessful()) {
+                    Uri uri = task.getResult();
+
+                    callback.onCallback(uri);
+                } else {
+                    callback.onCallback(null);
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                callback.onCallback(null);
+            }
+        });
     }
 
 /*

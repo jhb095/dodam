@@ -1,6 +1,8 @@
 package com.example.dodam.data;
 
-public class IngredientItemData {
+import java.io.Serializable;
+
+public class IngredientItemData implements Serializable {
     private String ingredientName;    // 성분 명
     private Boolean isExist;          // DB에 존재하는지
 
