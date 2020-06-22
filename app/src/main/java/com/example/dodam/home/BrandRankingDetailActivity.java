@@ -134,6 +134,17 @@ public class BrandRankingDetailActivity extends AppCompatActivity implements Vie
     // RecyclerView Item 클릭시
     @Override
     public void onItemClick(View v, int pos) {
+        Intent intent;
+        CosmeticRankItemData cosmeticRankItemData;
+
+        intent = new Intent(BrandRankingDetailActivity.this, CosmeticDetailActivity.class);
+
+        // 해당 제품 정보 넘기기
+        cosmeticRankItemData = cosmeticRankItemRVAdapter.getItem(pos);
+
+        intent.putExtra("cosmeticItemData", cosmeticRankItemData);
+
         // 해당 제품 화면으로 넘어가기
+        startActivity(intent);
     }
 }

@@ -82,7 +82,7 @@ public class IngredientItemRVAdapter extends RecyclerView.Adapter<IngredientItem
 
                     pos = getAdapterPosition();
 
-                    if (pos != RecyclerView.NO_POSITION) {
+                    if (pos != RecyclerView.NO_POSITION && mListener != null) {
                         mListener.onItemClick(v, pos);
                     }
                 }

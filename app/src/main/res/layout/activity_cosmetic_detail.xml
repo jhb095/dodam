@@ -11,7 +11,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#ffffff">
+        android:background="#ef889a">
 
         <ImageView
             android:id="@+id/cosmeticDetail_backIV"
@@ -19,19 +19,22 @@
             android:layout_height="30dp"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:background="@drawable/icon_arrow_back"
-            android:backgroundTint="#000000"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:text="제품 정보"
+            android:textColor="#ffffff"
             android:textSize="20dp"
-            android:textColor="#000000"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -45,13 +48,12 @@
 
         <ImageView
             android:id="@+id/cosmeticDetail_cosmeticIV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
             android:layout_marginTop="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/image_test_cosmetic" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
             android:id="@+id/cosmeticDetail_brandNameTV"
@@ -125,12 +127,13 @@
             app:layout_constraintTop_toTopOf="@+id/textView24" />
 
         <TextView
-            android:id="@+id/textView27"
+            android:id="@+id/cosmeticDetail_rankTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="1위"
             android:textColor="#ef889a"
             android:textSize="12dp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/cosmeticDetail_rateTV"
             app:layout_constraintTop_toTopOf="@+id/textView25" />
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -142,7 +145,7 @@
         android:background="#ffffff">
 
         <com.google.android.material.tabs.TabLayout
-            android:id="@+id/rank_categoryTabLayout"
+            android:id="@+id/cosmeticDetail_tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"

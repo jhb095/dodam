@@ -1,9 +1,10 @@
 package com.example.dodam.data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CosmeticRankItemData {
+public class CosmeticRankItemData implements Serializable {
     private String cosmeticId;      // 화장품 식별자(사용자가 올린 게시물 식별자)
     private int rank;               // 순위(별점을 토대로 설정)
     private String brandName;       // 브랜드 명
