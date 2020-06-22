@@ -20,11 +20,13 @@ public class IngredientItemRVAdapter extends RecyclerView.Adapter<IngredientItem
     private OnItemClickListener mListener = null;                  // listener 객체
 
     public IngredientItemRVAdapter() {
+
     }
 
     // listener interface
     public interface OnItemClickListener {
         void onItemClick(View v, int pos);
+
     }
 
     // OnItemClickListener 객체 설정
