@@ -43,7 +43,7 @@ public class CosmeticRankItemData {
     }
 
     // 브랜드 명 설정
-    public void setBrandName(String branName) {
+    public void setBrandName(String brandName) {
         this.brandName = brandName;
     }
 

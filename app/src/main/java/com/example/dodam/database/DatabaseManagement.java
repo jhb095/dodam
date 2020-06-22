@@ -256,7 +256,6 @@ public class DatabaseManagement {
                 brandRef = database.collection(Constant.DB_COLLECTION_BRANDS)
                         .document(cosmeticRankItemData.getBrandName());
 
-                //brandRef.set(cosmetic)
                 brandRef.set(brandCosmeticItems)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
