@@ -12,22 +12,27 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.dodam.R;
 import com.example.dodam.data.CosmeticRankItemData;
 import com.example.dodam.data.IngredientItem;
 import com.example.dodam.data.IngredientItemData;
+import com.example.dodam.data.ReviewItemData;
 import com.example.dodam.database.Callback;
 import com.example.dodam.database.DatabaseManagement;
 import com.google.android.material.tabs.TabLayout;
 import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 public class CosmeticDetailActivity extends AppCompatActivity implements View.OnClickListener, TabLayout.OnTabSelectedListener {
     private RecyclerView ingredientRV, reviewRV;
     private IngredientItemRVAdapter ingredientItemRVAdapter;
     private ReviewItemRVAdapter reviewItemRVAdapter;
     private CosmeticRankItemData cosmeticRankItemData;
+    private final int REQUEST_WRITE_REVIEW  = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,12 +131,16 @@ public class CosmeticDetailActivity extends AppCompatActivity implements View.On
         TabLayout tabLayout;
 
         tabLayout = findViewById(R.id.cosmeticDetail_tabLayout);
+        tabLayout.getTabAt(1).setText("리뷰(" + cosmeticRankItemData.getReviewCount() + ")");
 
         tabLayout.addOnTabSelectedListener(this);
     }
 
     // 제품성분 목록 새로고침
     private void refreshIngredients() {
+        // 전부 삭제
+        ingredientItemRVAdapter.delAllItem();
+
         // 하나씩 추가
         for(IngredientItemData ingredient : cosmeticRankItemData.getIngredients()) {
             ingredientItemRVAdapter.addItem(ingredient);
@@ -143,7 +152,40 @@ public class CosmeticDetailActivity extends AppCompatActivity implements View.On
 
     // 리뷰 목록 새로고침
     private void refreshReviews() {
+        // 전부 삭제
+        reviewItemRVAdapter.delAllItem();
 
+        // 리뷰 목록 불러오기
+        DatabaseManagement.getInstance().getCosmeticReviewsFromDatabase(cosmeticRankItemData.getCosmeticId(), new Callback<List<ReviewItemData>>() {
+            @Override
+            public void onCallback(List<ReviewItemData> data) {
+                if(data != null) {
+                    TabLayout tabLayout;
+                    TextView rateTV;
+                    float rate;
+
+                    tabLayout = findViewById(R.id.cosmeticDetail_tabLayout);
+                    tabLayout.getTabAt(1).setText("리뷰(" + data.size() + ")");
+
+                    rateTV = findViewById(R.id.cosmeticDetail_rateTV);
+
+                    rate = 0;
+
+                    // 하나씩 추가
+                    for (ReviewItemData review : data) {
+                        rate += review.getRate();
+                        reviewItemRVAdapter.addItem(review);
+                    }
+
+                    rate /= data.size();
+
+                    rateTV.setText(String.valueOf(rate));
+
+                    // 변경된 것을 알림
+                    reviewItemRVAdapter.notifyDataSetChanged();
+                }
+            }
+        });
     }
 
     @Override
@@ -165,7 +207,7 @@ public class CosmeticDetailActivity extends AppCompatActivity implements View.On
                 // 화장품 데이터 넣어서 보내야함
                 intent.putExtra("cosmeticRankItemData", cosmeticRankItemData);
 
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_WRITE_REVIEW);
 
                 break;
         }
@@ -173,7 +215,7 @@ public class CosmeticDetailActivity extends AppCompatActivity implements View.On
 
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
-        ConstraintLayout ingredientLayout, reviewLayout;
+        LinearLayout ingredientLayout, reviewLayout;
 
         ingredientLayout = findViewById(R.id.cosmeticDetail_ingredientLayout);
         reviewLayout = findViewById(R.id.cosmeticDetail_reviewLayout);
@@ -205,5 +247,14 @@ public class CosmeticDetailActivity extends AppCompatActivity implements View.On
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_WRITE_REVIEW) {
+                refreshReviews();
+            }
+        }
     }
 }

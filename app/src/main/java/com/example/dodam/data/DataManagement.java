@@ -1,10 +1,14 @@
 package com.example.dodam.data;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 // 앱 상 전반적인 데이터를 다루는 클래스(싱글톤)
@@ -48,5 +52,36 @@ public class DataManagement {
         });
 
         return data;
+    }
+
+    // 나이를 받아 'xx대'로 돌려주는 메소드
+    public String convertAge(int age) {
+        String ageStr;
+
+        if(age >= 40) {
+            ageStr = "40대 이상";
+        } else if(age >= 30) {
+            ageStr = "30대";
+        } else if(age >= 20) {
+            ageStr = "20대";
+        } else if(age >= 10) {
+            ageStr = "10대";
+        } else {
+            ageStr = "10대 미만";
+        }
+
+        return ageStr;
+    }
+
+    // 오늘날짜 가져오기
+    public String getTodayDate() {
+        Date currentDate;
+        String dateStr;
+
+        currentDate = Calendar.getInstance().getTime();
+
+        dateStr = new SimpleDateFormat("yyyy.MM.dd", Locale.getDefault()).format(currentDate);
+
+        return dateStr;
     }
 }

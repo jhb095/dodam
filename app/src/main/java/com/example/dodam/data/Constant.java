@@ -6,7 +6,9 @@ public interface Constant {
     String DB_COLLECTION_USERS = "users";
     String DB_COLLECTION_INGREDIENTS = "ingredients";
     String DB_COLLECTION_BRANDS = "brands";
+    String DB_COLLECTION_REVIEWS = "reviews";
     String DB_FIELD_REGISTERCOSMETICS = "registerCosmetics";
+    String DB_FIELD_REGISTERREVIEWS = "registerReviews";
     String DB_FILED_COSMETICS = "cosmetics";
 
     // 성별

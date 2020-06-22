@@ -4,10 +4,26 @@ public class ReviewItemData {
     private String userName;    // 유저 이름
     private String userInfo;    // 유저 정보
     private String writeDate;   // 작성일
-    private Double rate;        // 평점
+    private float rate;        // 평점
     private String content;     // 리뷰 내용
     private int like;           // 좋아요 수
     private int dislike;        // 싫어요 수
+
+    // Firebase용
+    public ReviewItemData() {
+
+    }
+
+    public ReviewItemData(String userName, String userInfo, String writeDate, float rate, String content) {
+        this.userName = userName;
+        this.userInfo = userInfo;
+        this.writeDate = writeDate;
+        this.rate = rate;
+        this.content = content;
+
+        like = 0;
+        dislike = 0;
+    }
 
     // 유저 이름 설정
     public void setUserName(String userName) {
@@ -32,10 +48,10 @@ public class ReviewItemData {
     public String getWriteDate() { return writeDate; }
 
     // 평점 설정
-    public void setRate(Double rate) { this.rate = rate; }
+    public void setRate(float rate) { this.rate = rate; }
 
     // 평점 반환
-    public Double getRate() { return rate; }
+    public float getRate() { return rate; }
 
     // 리뷰 내용 설정
     public void setContent(String content) { this.content = content; }
@@ -50,7 +66,7 @@ public class ReviewItemData {
     public int getLike() { return like; }
 
     // 싫어요 수 설정
-    public void setDislike() { this.dislike = dislike; }
+    public void setDislike(int dislike) { this.dislike = dislike; }
 
     // 싫어요 수 반환
     public int getDislike() { return dislike; }

@@ -16,6 +16,9 @@ import android.widget.Toast;
 
 import com.example.dodam.R;
 import com.example.dodam.data.CosmeticRankItemData;
+import com.example.dodam.data.DataManagement;
+import com.example.dodam.data.ReviewItemData;
+import com.example.dodam.data.UserData;
 import com.example.dodam.database.Callback;
 import com.example.dodam.database.DatabaseManagement;
 import com.squareup.picasso.Picasso;
@@ -109,17 +112,61 @@ public class WriteReviewActivity extends AppCompatActivity implements View.OnCli
 
     // 리뷰 등록하기
     private void registerReview() {
-        RatingBar ratingBar;
+        final RatingBar ratingBar;
         EditText reviewET;
 
         ratingBar = findViewById(R.id.writeReview_rate);
         reviewET = findViewById(R.id.writeReview_reviewET);
 
         // 평점을 선택하고 리뷰가 10글자 이상일 때만
-        if(ratingBar.isSelected() && reviewET.getText().length() >= 10) {
+        if(ratingBar.getRating() > 0 && reviewET.getText().length() >= 10) {
+            ReviewItemData reviewItemData;
+            UserData userData;
+            String userInfo;
+            String writeDate;
 
+            userData = DataManagement.getInstance().getUserData();
+
+            // 유저 정보는 "나이/피부타입1/피부타입2/누적제품 수"로 표현
+            userInfo = DataManagement.getInstance().convertAge(userData.getAge()) + "/" + userData.getSkinType1() + "/" + userData.getSkinType2()
+                    + "/" + "누적제품" + userData.getRegisterCosmetics().size() + "개";
+
+            writeDate = DataManagement.getInstance().getTodayDate();
+
+            reviewItemData = new ReviewItemData(userData.getName(), userInfo, writeDate, ratingBar.getRating(), reviewET.getText().toString());
+
+            DatabaseManagement.getInstance().addCosmeticReviewToDatabase(reviewItemData, userData.getEmail(), cosmeticRankItemData.getCosmeticId(), new Callback<Boolean>() {
+                @Override
+                public void onCallback(Boolean data) {
+                    // 작업 성공시
+                    if(data) {
+                        // 화장품 평점 업데이트
+                        DatabaseManagement.getInstance().updateCosmeticRate(ratingBar.getRating(), cosmeticRankItemData, new Callback<Boolean>() {
+                            @Override
+                            public void onCallback(Boolean data) {
+                                if(data) {
+                                    setResult(RESULT_OK);
+
+                                    // 이전 화면으로
+                                    finish();
+                                } else {
+                                    failWriteReview();
+                                }
+                            }
+                        });
+                    } else {
+                        failWriteReview();
+                    }
+                }
+            });
+
+            // DB에 등록하기
         } else {
-            Toast.makeText(this, "평점과 리뷰(10글자 이상) 모두 입력해 주세요", Toast.LENGTH_SHORT);
+            Toast.makeText(this, "평점과 리뷰(10글자 이상) 모두 입력해 주세요.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void failWriteReview() {
+        Toast.makeText(WriteReviewActivity.this, "리뷰 작성이 실패했어요.", Toast.LENGTH_SHORT).show();
     }
 }

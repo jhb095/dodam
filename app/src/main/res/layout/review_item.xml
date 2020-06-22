@@ -60,14 +60,45 @@
             </TextView>
         </LinearLayout>
 
-        <RatingBar
-            android:id="@+id/reviewItem_rate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/PinkRatingBar"
-            android:numStars="5"
-            android:isIndicator="true">
-        </RatingBar>
+        <ImageView
+            android:id="@+id/reviewItem_star1"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_gravity="right|center"
+            android:background="@drawable/icon_pink_star">
+        </ImageView>
+
+        <ImageView
+            android:id="@+id/reviewItem_star2"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_gravity="right|center"
+            android:background="@drawable/icon_pink_star">
+        </ImageView>
+
+        <ImageView
+            android:id="@+id/reviewItem_star3"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_gravity="right|center"
+            android:background="@drawable/icon_pink_star">
+        </ImageView>
+
+        <ImageView
+            android:id="@+id/reviewItem_star4"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_gravity="right|center"
+            android:background="@drawable/icon_pink_star">
+        </ImageView>
+
+        <ImageView
+            android:id="@+id/reviewItem_star5"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_gravity="right|center"
+            android:background="@drawable/icon_pink_star">
+        </ImageView>
     </LinearLayout>
 
     <TextView

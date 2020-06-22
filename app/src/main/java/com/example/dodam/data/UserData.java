@@ -16,11 +16,13 @@ public class UserData {
     private String     skinType1;    // 사용자 피부타입1(지성, 건성)
     private String     skinType2;    // 사용자 피부타입2(민감성, 저항성)
     private String  signUpDate;  // 사용자 가입날짜
-    private List<String> registerCosmetics;   // 사용자가 등록한 화장품들(화장품 식별자)
+    private List<String> registerCosmetics;   // 사용자가 등록한 화장품들(화장품 식별자로 구별)
+    private List<String> registerReviews;   // 사용자가 등록한 리뷰들(화장품 식별자로 구별)
 
     // 기본 생성자(Firebase)
     public UserData() {
-        registerCosmetics = new ArrayList<String>();
+        registerCosmetics = new ArrayList<>();
+        registerReviews = new ArrayList<>();
     }
 
     // 생성자
@@ -94,10 +96,13 @@ public class UserData {
         return skinType2;
     }
 
-    // 사용자가 등록한 화장품들 반환
+    // 사용자가 등록한 화장품 목록 반환
     public List<String> getRegisterCosmetics() {
         return registerCosmetics;
     }
+
+    // 사용자가 등록한 리뷰 목록 반환
+    public List<String> getRegisterReviews() { return registerReviews; }
 
     // 사용자 나이 설정
     public void setAge(int age) {
@@ -147,6 +152,11 @@ public class UserData {
     // 사용자가 등록한 화장품 목록 설정
     public void setRegisterCosmetics(List<String> registerCosmetics) {
         this.registerCosmetics = registerCosmetics;
+    }
+
+    // 사용자가 등록한 리뷰 목록 설정
+    public void setRegisterReviews(List<String> registerReviews) {
+        this.registerReviews = registerReviews;
     }
 
     // 생년월일로부터 나이 구하기

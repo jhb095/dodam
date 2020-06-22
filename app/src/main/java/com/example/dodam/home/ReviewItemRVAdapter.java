@@ -36,7 +36,7 @@ public class ReviewItemRVAdapter extends RecyclerView.Adapter<ReviewItemRVAdapte
         View view;
 
         // LayoutInflater를 이용하여 item.xml을 inflate
-        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cosmetic_rank_item, parent, false);
+        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.review_item, parent, false);
 
         return new ItemViewHolder(view);
     }
@@ -70,6 +70,7 @@ public class ReviewItemRVAdapter extends RecyclerView.Adapter<ReviewItemRVAdapte
     class ItemViewHolder extends RecyclerView.ViewHolder {
         private TextView userNameTV, userInfoTV, writeDateTV, contentTV, likeTV, dislikeTV;
         private ImageView profileIV;
+        private ImageView[] starIVs;
 
         ItemViewHolder(View itemView) {
             super(itemView);
@@ -83,7 +84,7 @@ public class ReviewItemRVAdapter extends RecyclerView.Adapter<ReviewItemRVAdapte
                     pos = getAdapterPosition();
 
                     // listener 객체의 메서드 호출
-                    if(pos != RecyclerView.NO_POSITION) {
+                    if(pos != RecyclerView.NO_POSITION && mListener != null) {
                         mListener.onItemClick(v, pos);
                     }
                 }
@@ -95,15 +96,47 @@ public class ReviewItemRVAdapter extends RecyclerView.Adapter<ReviewItemRVAdapte
             contentTV = itemView.findViewById(R.id.reviewItem_contentTV);
             likeTV = itemView.findViewById(R.id.reviewItem_likeCountTV);
             dislikeTV = itemView.findViewById(R.id.reviewItem_dislikeCountTV);
+
+            starIVs = new ImageView[5];
+
+            starIVs[0] = itemView.findViewById(R.id.reviewItem_star1);
+            starIVs[1] = itemView.findViewById(R.id.reviewItem_star2);
+            starIVs[2] = itemView.findViewById(R.id.reviewItem_star3);
+            starIVs[3] = itemView.findViewById(R.id.reviewItem_star4);
+            starIVs[4] = itemView.findViewById(R.id.reviewItem_star5);
         }
 
         void onBind(ReviewItemData data) {
+            float rate;
+
+            rate = data.getRate();
+
             userNameTV.setText(data.getUserName());
             userInfoTV.setText(data.getUserInfo());
             writeDateTV.setText(data.getWriteDate());
             contentTV.setText(data.getContent());
-            likeTV.setText(data.getLike());
-            dislikeTV.setText(data.getDislike());
+            likeTV.setText(String.valueOf(data.getLike()));
+            dislikeTV.setText(String.valueOf(data.getDislike()));
+
+            if(rate < 5) {
+                starIVs[4].setVisibility(View.INVISIBLE);
+            }
+
+            if(rate < 4) {
+                starIVs[3].setVisibility(View.INVISIBLE);
+            }
+
+            if(rate < 3) {
+                starIVs[2].setVisibility(View.INVISIBLE);
+            }
+
+            if(rate < 2) {
+                starIVs[1].setVisibility(View.INVISIBLE);
+            }
+
+            if(rate < 1) {
+                starIVs[0].setVisibility(View.INVISIBLE);
+            }
         }
     }
 }

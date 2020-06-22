@@ -10,7 +10,8 @@ public class CosmeticRankItemData implements Serializable {
     private String brandName;       // 브랜드 명
     private String cosmeticName;    // 화장품 명
     private String category;        // 화장품 카테고리
-    private Double rate;            // 별점
+    private float rate;             // 별점
+    private int reviewCount;        // 리뷰 개수
     private List<IngredientItemData> ingredients;   // 화장품 성분 목록
 
     // 기본 생성자(Firebase 때문)
@@ -26,7 +27,8 @@ public class CosmeticRankItemData implements Serializable {
         ingredients = new ArrayList<>();
 
         rank = 0;
-        rate = 0.;
+        rate = 0;
+        reviewCount = 0;
     }
 
     // 화장품 식별자 설정
@@ -80,12 +82,12 @@ public class CosmeticRankItemData implements Serializable {
     }
 
     // 별점 설정
-    public void setRate(Double rate) {
+    public void setRate(float rate) {
         this.rate = rate;
     }
 
     // 별점 반환
-    public Double getRate() {
+    public float getRate() {
         return rate;
     }
 
@@ -102,5 +104,15 @@ public class CosmeticRankItemData implements Serializable {
     // 화장품 성분 추가
     public void addIngredient(IngredientItemData ingredientItemData) {
         ingredients.add(ingredientItemData);
+    }
+
+    // 리뷰 개수 설정
+    public void setReviewCount(int reviewCount) {
+        this.reviewCount = reviewCount;
+    }
+
+    // 리뷰 개수 반환
+    public int getReviewCount() {
+        return reviewCount;
     }
 }

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.telecom.Call;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -20,8 +21,10 @@ import com.example.dodam.data.BrandCosmeticItems;
 import com.example.dodam.data.BrandItemData;
 import com.example.dodam.data.Constant;
 import com.example.dodam.data.CosmeticRankItemData;
+import com.example.dodam.data.CosmeticReviewItems;
 import com.example.dodam.data.DataManagement;
 import com.example.dodam.data.IngredientItem;
+import com.example.dodam.data.ReviewItemData;
 import com.example.dodam.data.UserData;
 
 import com.google.android.gms.tasks.Continuation;
@@ -400,6 +403,130 @@ public class DatabaseManagement {
             @Override
             public void onFailure(@NonNull Exception e) {
                 callback.onCallback(null);
+            }
+        });
+    }
+
+    // DB에 리뷰 추가
+    public void addCosmeticReviewToDatabase(final ReviewItemData reviewItemData, final String userEmail, final String cosmeticId, final Callback<Boolean> callback) {
+        getCosmeticReviewsFromDatabase(cosmeticId, new Callback<List<ReviewItemData>>() {
+            @Override
+            public void onCallback(List<ReviewItemData> data) {
+                DocumentReference reviewRef;
+                CosmeticReviewItems cosmeticReviewItems;
+
+                cosmeticReviewItems = new CosmeticReviewItems();
+
+                if(data != null) {
+                    cosmeticReviewItems.setReviews(data);
+                }
+
+                cosmeticReviewItems.getReviews().add(reviewItemData);
+
+                reviewRef = database.collection(Constant.DB_COLLECTION_REVIEWS).document(cosmeticId);
+                reviewRef.set(cosmeticReviewItems)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                DocumentReference userRef;
+                                UserData userData;
+
+                                userData = DataManagement.getInstance().getUserData();
+
+                                userData.getRegisterReviews().add(cosmeticId);
+
+                                // 유저 데이터 업데이트
+                                userRef = database.collection(Constant.DB_COLLECTION_USERS).document(userEmail);
+                                userRef.update(Constant.DB_FIELD_REGISTERREVIEWS, userData.getRegisterCosmetics());
+
+                                callback.onCallback(true);
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        callback.onCallback(false);
+                    }
+                });
+            }
+        });
+    }
+
+    // 해당 제품 리뷰 가져오기
+    public void getCosmeticReviewsFromDatabase(String cosmeticId, final Callback<List<ReviewItemData>> callback) {
+        DocumentReference reviewRef;
+
+        reviewRef = database.collection(Constant.DB_COLLECTION_REVIEWS).document(cosmeticId);
+        reviewRef.get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()) {
+                            DocumentSnapshot document;
+                            List<ReviewItemData> cosmeticReviewItems;
+
+                            document = task.getResult();
+
+                            if(document != null && document.exists()) {
+                                cosmeticReviewItems = document.toObject(CosmeticReviewItems.class).getReviews();
+
+                                callback.onCallback(cosmeticReviewItems);
+                            } else {
+                                callback.onCallback(null);
+                            }
+                        } else {
+                            callback.onCallback(null);
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                callback.onCallback(null);
+            }
+        });
+    }
+
+    // 화장품 평점 업데이트
+    public void updateCosmeticRate(final float rate, final CosmeticRankItemData cosmeticRankItemData, final Callback<Boolean> callback) {
+        // 업데이트 하고자 하는 제품 브랜드의 모든 화장품 목록 가져오기
+        getBrandCosmeticsFromDatabase(cosmeticRankItemData.getBrandName(), new Callback<List<CosmeticRankItemData>>() {
+            @Override
+            public void onCallback(List<CosmeticRankItemData> data) {
+                DocumentReference brandRef;
+                BrandCosmeticItems brandCosmeticItems;
+
+                brandCosmeticItems = new BrandCosmeticItems();
+
+                if(data != null) {
+                    // 제품 목록에서 현재 화장품에 해당하는 것을 지우고 평점을 고친 것을 집어넣기
+                    for(CosmeticRankItemData item : data) {
+                        if(item.getCosmeticId().equals(cosmeticRankItemData.getCosmeticId())) {
+                            data.remove(item);
+
+                            break;
+                        }
+                    }
+
+                    brandCosmeticItems.setCosmetics(data);
+                }
+
+                cosmeticRankItemData.setRate((cosmeticRankItemData.getRate() * cosmeticRankItemData.getReviewCount() + rate) / (cosmeticRankItemData.getReviewCount() + 1));
+                cosmeticRankItemData.setReviewCount(cosmeticRankItemData.getReviewCount() + 1);
+
+                brandCosmeticItems.getCosmetics().add(cosmeticRankItemData);
+
+                brandRef = database.collection(Constant.DB_COLLECTION_BRANDS).document(cosmeticRankItemData.getBrandName());
+                brandRef.set(brandCosmeticItems)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                callback.onCallback(true);
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        callback.onCallback(false);
+                    }
+                });
             }
         });
     }
