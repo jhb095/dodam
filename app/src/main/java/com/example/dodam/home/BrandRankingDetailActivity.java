@@ -26,6 +26,7 @@ public class BrandRankingDetailActivity extends AppCompatActivity implements Vie
     private RecyclerView cosmeticRV;
     private CosmeticRankItemRVAdapter cosmeticRankItemRVAdapter;
     private String brandName;   // BrandRanking Activity로부터 받아온 브랜드 명
+    private final int REQUEST_COSMETIC_DETAIL = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +35,17 @@ public class BrandRankingDetailActivity extends AppCompatActivity implements Vie
         setContentView(R.layout.activity_brand_ranking_detail);
 
         initailize();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if(cosmeticRankItemRVAdapter == null) {
+            initializeRecyclerView();
+        }
+
+        refreshBrandCosmetics();
     }
 
     // 필요한 항목 초기화
@@ -47,7 +59,6 @@ public class BrandRankingDetailActivity extends AppCompatActivity implements Vie
 
         initializeTextView();
         initializeImageView();
-        initializeRecyclerView();
     }
 
     // TextView 초기화
@@ -75,19 +86,19 @@ public class BrandRankingDetailActivity extends AppCompatActivity implements Vie
         cosmeticRV = findViewById(R.id.brandRankingDetail_cosmeticRV);
         cosmeticRV.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-        cosmeticRankItemRVAdapter = new CosmeticRankItemRVAdapter();
+        cosmeticRankItemRVAdapter = new CosmeticRankItemRVAdapter(this);
 
         // Item ClickListener 추가
         cosmeticRankItemRVAdapter.setOnItemClickListener(this);
 
         cosmeticRV.setAdapter(cosmeticRankItemRVAdapter);
-
-        // 새로고침
-        refreshBrandCosmetics();
     }
 
     // 해당 브랜드의 화장품 목록 새로고침
     private void refreshBrandCosmetics() {
+        // 먼저 전부 지우기
+        cosmeticRankItemRVAdapter.delAllItem();
+
         // DB로부터 해당 브랜드에 속하는 화장품들 받아오기
         DatabaseManagement.getInstance().getBrandCosmeticsFromDatabase(brandName, new Callback<List<CosmeticRankItemData>>() {
             @Override
@@ -98,7 +109,7 @@ public class BrandRankingDetailActivity extends AppCompatActivity implements Vie
                     int rank;
 
                     // 평점 순으로 정렬
-                    data = DataManagement.getInstance().sortByRate(data);
+                    data = DataManagement.getInstance().sortByCosemticRate(data);
 
                     rank = 1;
 
@@ -145,6 +156,15 @@ public class BrandRankingDetailActivity extends AppCompatActivity implements Vie
         intent.putExtra("cosmeticItemData", cosmeticRankItemData);
 
         // 해당 제품 화면으로 넘어가기
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_COSMETIC_DETAIL);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == RESULT_OK) {
+            if(requestCode == REQUEST_COSMETIC_DETAIL) {
+                // 처리할 작업 없음
+            }
+        }
     }
 }

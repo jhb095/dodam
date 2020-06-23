@@ -1,5 +1,6 @@
 package com.example.dodam.data;
 
+import com.example.dodam.database.Callback;
 import com.example.dodam.database.DatabaseManagement;
 
 import java.util.ArrayList;
@@ -49,6 +50,9 @@ public class UserData {
                 + "월 "
                 + String.valueOf(calendar.get(Calendar.DAY_OF_MONTH))
                 + "일";
+
+        registerCosmetics = new ArrayList<>();
+        registerReviews = new ArrayList<>();
     }
 
     // 사용자 나이 반환
@@ -209,6 +213,10 @@ public class UserData {
         }
 
         // 설정을 했으니 디비에 등록해야 함
-        DatabaseManagement.getInstance().addUserToDatabase(this);
+        DatabaseManagement.getInstance().addUserToDatabase(this, new Callback<Boolean>() {
+            @Override
+            public void onCallback(Boolean data) {
+            }
+        });
     }
 }

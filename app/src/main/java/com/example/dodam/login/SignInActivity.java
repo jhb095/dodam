@@ -4,15 +4,22 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.telecom.Call;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.dodam.R;
+import com.example.dodam.data.BrandItemData;
+import com.example.dodam.data.CosmeticRankItemData;
+import com.example.dodam.data.DataManagement;
 import com.example.dodam.database.Callback;
 import com.example.dodam.database.DatabaseManagement;
 import com.example.dodam.home.HomeActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
     @Override

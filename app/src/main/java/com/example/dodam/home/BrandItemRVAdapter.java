@@ -68,7 +68,7 @@ public class BrandItemRVAdapter extends RecyclerView.Adapter<BrandItemRVAdapter.
 
     // subView 셋팅
     class ItemViewHolder extends RecyclerView.ViewHolder {
-        private TextView rankTV, brandNameTV;
+        private TextView brandNameTV;
         private ImageView brandIV;
 
         ItemViewHolder(View itemView) {
@@ -89,12 +89,10 @@ public class BrandItemRVAdapter extends RecyclerView.Adapter<BrandItemRVAdapter.
                 }
             });
 
-            rankTV = itemView.findViewById(R.id.brandItem_rankTV);
             brandNameTV = itemView.findViewById(R.id.brandItem_brandNameTV);
         }
 
         void onBind(BrandItemData data) {
-            rankTV.setText(String.valueOf(data.getRank()));
             brandNameTV.setText(data.getBrandName());
         }
     }

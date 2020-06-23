@@ -14,12 +14,15 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.dodam.R;
 import com.example.dodam.data.CosmeticRankItemData;
+import com.example.dodam.data.DataManagement;
 import com.example.dodam.data.IngredientItem;
 import com.example.dodam.data.IngredientItemData;
 import com.example.dodam.data.ReviewItemData;
+import com.example.dodam.data.UserData;
 import com.example.dodam.database.Callback;
 import com.example.dodam.database.DatabaseManagement;
 import com.google.android.material.tabs.TabLayout;
@@ -29,8 +32,8 @@ import java.util.List;
 
 public class CosmeticDetailActivity extends AppCompatActivity implements View.OnClickListener, TabLayout.OnTabSelectedListener {
     private RecyclerView ingredientRV, reviewRV;
-    private IngredientItemRVAdapter ingredientItemRVAdapter;
-    private ReviewItemRVAdapter reviewItemRVAdapter;
+    private IngredientItemRVAdapter ingredientItemRVAdapter = null;
+    private ReviewItemRVAdapter reviewItemRVAdapter = null;
     private CosmeticRankItemData cosmeticRankItemData;
     private final int REQUEST_WRITE_REVIEW  = 1;
 
@@ -42,6 +45,18 @@ public class CosmeticDetailActivity extends AppCompatActivity implements View.On
 
         // 필요한 항목 초기화
         initialize();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if(ingredientItemRVAdapter == null && reviewItemRVAdapter == null) {
+            initializeRecyclerView();
+        }
+
+        refreshReviews();
+        refreshIngredients();
     }
 
     // 필요한 항목 초기화
@@ -56,7 +71,6 @@ public class CosmeticDetailActivity extends AppCompatActivity implements View.On
         initializeTextView();
         initializeImageView();
         initializeButton();
-        initializeRecyclerView();
         initializeTabLayout();
     }
 
@@ -120,10 +134,6 @@ public class CosmeticDetailActivity extends AppCompatActivity implements View.On
 
         ingredientRV.setAdapter(ingredientItemRVAdapter);
         reviewRV.setAdapter(reviewItemRVAdapter);
-
-        // 목록 새로고침
-        refreshIngredients();
-        refreshReviews();
     }
 
     // TabLayout 초기화
@@ -201,6 +211,18 @@ public class CosmeticDetailActivity extends AppCompatActivity implements View.On
 
             // 리뷰 작성
             case R.id.cosmeticDetail_writeReviewBtn:
+                UserData userData;
+
+                userData = DataManagement.getInstance().getUserData();
+
+                // 이미 해당 사용자가 리뷰를 작성했으면 작성할 수 없음
+                for(String reviewId : userData.getRegisterReviews()) {
+                    if(reviewId.equals(cosmeticRankItemData.getCosmeticId())) {
+                        Toast.makeText(this, "이미 리뷰를 작성했어요.", Toast.LENGTH_SHORT).show();
+
+                        return;
+                    }
+                }
                 // 리뷰 작성 화면으로 넘어가기
                 intent = new Intent(CosmeticDetailActivity.this, WriteReviewActivity.class);
 
@@ -253,7 +275,7 @@ public class CosmeticDetailActivity extends AppCompatActivity implements View.On
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode == RESULT_OK) {
             if (requestCode == REQUEST_WRITE_REVIEW) {
-                refreshReviews();
+                // 처리할 작업 없음
             }
         }
     }

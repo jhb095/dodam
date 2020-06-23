@@ -1,5 +1,7 @@
 package com.example.dodam.home;
 
+import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,14 +13,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dodam.R;
 import com.example.dodam.data.CosmeticRankItemData;
+import com.example.dodam.database.Callback;
+import com.example.dodam.database.DatabaseManagement;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 public class CosmeticRankItemRVAdapter extends RecyclerView.Adapter<CosmeticRankItemRVAdapter.ItemViewHolder> {
     private ArrayList<CosmeticRankItemData> listData = new ArrayList<>(); // adapter에 들어갈 list
     private OnItemClickListener mListener = null;                  // listener 객체
+    private Context context;
 
-    public CosmeticRankItemRVAdapter() {
+    public CosmeticRankItemRVAdapter(Context context) {
+        this.context = context;
     }
 
     // listener interface
@@ -97,10 +104,26 @@ public class CosmeticRankItemRVAdapter extends RecyclerView.Adapter<CosmeticRank
         }
 
         void onBind(CosmeticRankItemData data) {
-            rankTV.setText(String.valueOf(data.getRank()));
+            // 랭킹이 0이면 안보이게
+            if(data.getRank() == 0) {
+                rankTV.setVisibility(View.INVISIBLE);
+            } else {
+                rankTV.setText(String.valueOf(data.getRank()));
+            }
+
             brandNameTV.setText(data.getBrandName());
             cosmeticNameTV.setText(data.getCosmeticName());
             rateTV.setText(Double.toString(data.getRate()));
+
+            DatabaseManagement.getInstance().getCosmeticImageFromStorage(data.getBrandName(), data.getCosmeticName()
+                    , new Callback<Uri>() {
+                        @Override
+                        public void onCallback(Uri data) {
+                            if(data != null) {
+                                Picasso.with(context).load(data).resize(200, 200).into(cosmeticIV);
+                            }
+                        }
+                    });
         }
     }
 }

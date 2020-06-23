@@ -7,16 +7,6 @@
     android:orientation="horizontal"
     android:gravity="center">
 
-    <TextView
-        android:id="@+id/brandItem_rankTV"
-        android:layout_width="30dp"
-        android:layout_height="wrap_content"
-        android:text="1"
-        android:textSize="24dp"
-        android:textColor="#ef889a"
-        android:textStyle="bold">
-    </TextView>
-
     <ImageView
         android:id="@+id/brandItem_brandIV"
         android:layout_width="60dp"

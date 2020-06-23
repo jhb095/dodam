@@ -82,10 +82,10 @@ public class RankFragment extends Fragment implements View.OnClickListener, TabL
         ageRV.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         reviewRV.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
-        categoryRVAdapter = new CosmeticRankItemRVAdapter();
-        skinTypeRVAdapter = new CosmeticRankItemRVAdapter();
-        ageRVAdapter = new CosmeticRankItemRVAdapter();
-        reviewRVAdapter = new CosmeticRankItemRVAdapter();
+        categoryRVAdapter = new CosmeticRankItemRVAdapter(getActivity());
+        skinTypeRVAdapter = new CosmeticRankItemRVAdapter(getActivity());
+        ageRVAdapter = new CosmeticRankItemRVAdapter(getActivity());
+        reviewRVAdapter = new CosmeticRankItemRVAdapter(getActivity());
 
         categoryRVAdapter.setOnItemClickListener(this);
         skinTypeRVAdapter.setOnItemClickListener(this);

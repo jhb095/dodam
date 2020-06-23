@@ -22,8 +22,7 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginRight="20dp"
-        android:background="@null"
-        android:src="@drawable/icon_brand">
+        android:background="@null">
     </ImageView>
 
     <LinearLayout

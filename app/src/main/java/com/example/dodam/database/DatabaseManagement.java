@@ -3,14 +3,10 @@ package com.example.dodam.database;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.telecom.Call;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +23,6 @@ import com.example.dodam.data.IngredientItem;
 import com.example.dodam.data.ReviewItemData;
 import com.example.dodam.data.UserData;
 
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -41,18 +36,15 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
-import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 // 데이터베이스 전반적인 것을 다루는 클래스(싱글톤)
 public class DatabaseManagement {
@@ -129,31 +121,32 @@ public class DatabaseManagement {
     }
 
     // 이메일 회원가입
-    public void signUpEmail(final Activity activity, final UserData user) {
+    public void signUpEmail(final UserData user, final Callback<Boolean> callback) {
         // 유저 생성 작업
         firebaseAuth.createUserWithEmailAndPassword(user.getEmail(), user.getPassword())
-                    .addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
+                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         // 작업 완료시
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             // 성공적으로 가입되었을 때
                             if(task.isSuccessful()) {
                                 // DB에 유저 정보 등록
-                                addUserToDatabase(user);
-
-                                activity.finish();
+                                addUserToDatabase(user, callback);
                             } else {
                                 // 가입 실패시
-                                System.out.println("이메일 회원가입 실패");
-
-                                Toast.makeText(activity, "회원가입 실패", Toast.LENGTH_SHORT).show();
+                                callback.onCallback(false);
                             }
                         }
-                    });
+                    }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                callback.onCallback(false);
+            }
+        });
     }
 
     // DB에 사용자 등록
-    public void addUserToDatabase(UserData user) {
+    public void addUserToDatabase(UserData user, final Callback<Boolean> callback) {
         CollectionReference userRef;
 
         // user에 id값이 없으면 넣어줘야 한다.
@@ -168,13 +161,37 @@ public class DatabaseManagement {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
+                        callback.onCallback(true);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     // 실패시
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        System.out.println("유저 데이터 DB 등록 실패");
+                        callback.onCallback(false);
+                    }
+                });
+    }
+
+    // DB에 사용자 피부타입 업데이트
+    public void updateUserSkinTypeToDatabas(UserData user, final Callback<Boolean> callback) {
+        CollectionReference userRef;
+
+        // DB Collection에 해당 유저 Document 추가
+        userRef = database.collection(Constant.DB_COLLECTION_USERS);
+        userRef.document(user.getEmail())
+                .update("SkinType1", user.getSkinType1(), "SkinType2", user.getSkinType2())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        callback.onCallback(true);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    // 실패시
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        callback.onCallback(false);
                     }
                 });
     }
@@ -295,12 +312,17 @@ public class DatabaseManagement {
                                 // 작업 성공시
                                 if(task.isSuccessful()) {
                                     DocumentReference userRef;
+                                    DocumentReference cosmeticRef;
 
                                     userData.getRegisterCosmetics().add(cosmeticRankItemData.getCosmeticId());
 
                                     // 유저 데이터 업데이트
                                     userRef = database.collection(Constant.DB_COLLECTION_USERS).document(userData.getEmail());
                                     userRef.update(Constant.DB_FIELD_REGISTERCOSMETICS, userData.getRegisterCosmetics());
+
+                                    // DB 화장품 경로에도 추가
+                                    cosmeticRef = database.collection(Constant.DB_COLLECTION_COSMETICS).document(cosmeticRankItemData.getCosmeticId());
+                                    cosmeticRef.set(cosmeticRankItemData);
 
                                     callback.onCallback(true);
                                 } else {
@@ -313,6 +335,38 @@ public class DatabaseManagement {
                         callback.onCallback(false);
                     }
                 });
+            }
+        });
+    }
+
+    // DB로부터 전체 화장품 목록 가져오기
+    public void getCosmeticsFromDatabase(final Callback<List<CosmeticRankItemData>> callback) {
+        CollectionReference cosmeticRef;
+
+        cosmeticRef = database.collection(Constant.DB_COLLECTION_COSMETICS);
+        cosmeticRef.get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()) {
+                            List<CosmeticRankItemData> cosmetics;
+
+                            cosmetics = new ArrayList<>();
+
+                            // 한 항목씩 뽑아서 추가
+                            for(QueryDocumentSnapshot cosmetic : task.getResult()) {
+                                cosmetics.add(cosmetic.toObject(CosmeticRankItemData.class));
+                            }
+
+                            callback.onCallback(cosmetics);
+                        } else {
+                            callback.onCallback(null);
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                callback.onCallback(null);
             }
         });
     }

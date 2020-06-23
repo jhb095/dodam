@@ -4,6 +4,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.dodam.R;
 import com.example.dodam.data.UserData;
+import com.example.dodam.database.Callback;
 import com.example.dodam.database.DatabaseManagement;
 
 import java.util.ArrayList;
@@ -116,6 +118,9 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 final UserData userData;  // 사용자 데이터 생성
                 int userAge;        // 사용자 나이
                 boolean userGender; // 사용자 성별
+                final Context context;
+
+                context = this;
 
                 // 생년월일로 부터 사용자 나이 구하기
                 userAge = UserData.getAgeFromBirthDay(birthDay);
@@ -127,9 +132,20 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 userData = new UserData(email, password, name, userAge, userGender);
 
                 // 파이어베이스 인증정보에 사용자 추가 및 DB에 등록
-                DatabaseManagement.getInstance().signUpEmail(this, userData);
+                DatabaseManagement.getInstance().signUpEmail(userData, new Callback<Boolean>() {
+                    @Override
+                    public void onCallback(Boolean data) {
+                        if(data) {
+                            Toast.makeText(context, "회원가입에 성공했어요.", Toast.LENGTH_SHORT).show();
+
+                            finish();
+                        } else {
+                            Toast.makeText(context, "회원가입에 실패했어요.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
             } else {
-                Toast.makeText(SignUpActivity.this, "비밀번호는 6자리 이상이어야 합니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SignUpActivity.this, "비밀번호는 6자리 이상 입력해주세요.", Toast.LENGTH_SHORT).show();
             }
         } else {
             // 하나라도 비었으면 메시지 출력
