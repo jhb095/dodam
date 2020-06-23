@@ -12,11 +12,18 @@ public class CosmeticRankItemData implements Serializable {
     private String category;        // 화장품 카테고리
     private float rate;             // 별점
     private int reviewCount;        // 리뷰 개수
+    private String popularSkinType1;    // 인기있는 피부타입1
+    private String popularSkinType2;    // 인기있는 피부타입2
+    private String popularAge;             // 인기있는 연령대
     private List<IngredientItemData> ingredients;   // 화장품 성분 목록
 
     // 기본 생성자(Firebase 때문)
     public CosmeticRankItemData() {
         ingredients = new ArrayList<>();
+
+        popularSkinType1 = Constant.SKIN_NO;
+        popularSkinType2 = Constant.SKIN_NO;
+        popularAge = "";
     }
 
     public CosmeticRankItemData(String brandName, String cosmeticName, String category) {
@@ -29,6 +36,10 @@ public class CosmeticRankItemData implements Serializable {
         rank = 0;
         rate = 0;
         reviewCount = 0;
+
+        popularSkinType1 = Constant.SKIN_NO;
+        popularSkinType2 = Constant.SKIN_NO;
+        popularAge = "";
     }
 
     // 화장품 식별자 설정
@@ -114,5 +125,35 @@ public class CosmeticRankItemData implements Serializable {
     // 리뷰 개수 반환
     public int getReviewCount() {
         return reviewCount;
+    }
+
+    // 인기있는 피부타입1 설정
+    public void setPopularSkinType1(String popularSkinType1) {
+        this.popularSkinType1 = popularSkinType1;
+    }
+
+    // 인기있는 피부타입1 반환
+    public String getPopularSkinType1() {
+        return popularSkinType1;
+    }
+
+    // 인기있는 피부타입2 설정
+    public void setPopularSkinType2(String popularSkinType2) {
+        this.popularSkinType2 = popularSkinType2;
+    }
+
+    // 인기있는 피부타입2 반환
+    public String getPopularSkinType2() {
+        return popularSkinType2;
+    }
+
+    // 인기있는 연령대 설정
+    public void setPopularAge(String popularAge) {
+        this.popularAge = popularAge;
+    }
+
+    // 인기있는 연령대 반환
+    public String getPopularAge() {
+        return popularAge;
     }
 }

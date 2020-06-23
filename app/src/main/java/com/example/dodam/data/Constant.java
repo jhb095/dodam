@@ -25,13 +25,22 @@ public interface Constant {
     String SKIN_WEAK_DRY       = "약건성";
     String SKIN_WEAK_OILY      = "약지성";
     String SKIN_OILY           = "지성";
+    int SKIN_DRY_INT        = 0;
+    int SKIN_WEAK_DRY_INT   = 1;
+    int SKIN_WEAK_OILY_INT  = 2;
+    int SKIN_OILY_INT       = 3;
 
     String SKIN_SENSITIVE      = "민감성";
     String SKIN_WEAK_SENSITIVE = "약민감성";
     String SKIN_WEAK_RESISTANT = "약저항성";
     String SKIN_RESISTANT      = "저항성";
+    int SKIN_SENSITIVE_INT      = 0;
+    int SKIN_WEAK_SENSITIVE_INT = 1;
+    int SKIN_WEAK_RESISTANT_INT = 2;
+    int SKIN_RESISTANT_INT      = 3;
 
     // 화장품 카테고리 관련
+    String CATEGORY_ALL         = "전체";
     String CATEGORY_SKINCARE    = "스킨케어";
     String CATEGORY_CLEANSING   = "클렌징";
     String CATEGORY_MASKANDPACK = "마스크/팩";

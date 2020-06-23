@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dodam.R;
+import com.example.dodam.data.Constant;
 import com.example.dodam.data.CosmeticRankItemData;
 import com.example.dodam.data.DataManagement;
 import com.example.dodam.data.IngredientItem;
@@ -214,6 +215,13 @@ public class CosmeticDetailActivity extends AppCompatActivity implements View.On
             // 리뷰 작성
             case R.id.cosmeticDetail_writeReviewBtn:
                 UserData userData;
+
+                // 피부타입 설문을 안했으면 작성 불가
+                if(DataManagement.getInstance().getUserData().getSkinType1().equals(Constant.SKIN_NO)) {
+                    Toast.makeText(this, "피부타입을 먼저 설정하세요.", Toast.LENGTH_SHORT).show();
+
+                    return;
+                }
 
                 userData = DataManagement.getInstance().getUserData();
 

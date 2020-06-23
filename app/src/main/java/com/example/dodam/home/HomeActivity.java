@@ -31,19 +31,17 @@ import java.util.Map;
 import java.util.Set;
 
 public class HomeActivity extends AppCompatActivity implements CosmeticRankItemRVAdapter.OnItemClickListener {
-    private ViewPager viewPager;
+    private ViewPager viewPager = null;
     private TabLayout tabs;
     private RecyclerView cosmeticRV;
     private CosmeticRankItemRVAdapter cosmeticRVAdapter;
+    private final int REQUEST_COSMETIC_DETAIL = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_home);
-
-        // 필요한 항목 초기화
-        initialize();
     }
 
     @Override
@@ -61,6 +59,10 @@ public class HomeActivity extends AppCompatActivity implements CosmeticRankItemR
 
                 // 앱상 데이터에 추가
                 DataManagement.getInstance().setCosmetics(data);
+
+                if(viewPager == null) {
+                    initialize();
+                }
             }
         });
     }
@@ -169,6 +171,27 @@ public class HomeActivity extends AppCompatActivity implements CosmeticRankItemR
 
     @Override
     public void onItemClick(View v, int pos) {
+        // 해당 제품 화면으로 넘어가기
+        Intent intent;
+        CosmeticRankItemData cosmeticRankItemData;
 
+        intent = new Intent(HomeActivity.this, CosmeticDetailActivity.class);
+
+        // 해당 제품 정보 넘기기
+        cosmeticRankItemData = cosmeticRVAdapter.getItem(pos);
+
+        intent.putExtra("cosmeticItemData", cosmeticRankItemData);
+
+        // 해당 제품 화면으로 넘어가기
+        startActivityForResult(intent, REQUEST_COSMETIC_DETAIL);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == RESULT_OK) {
+            if(requestCode == REQUEST_COSMETIC_DETAIL) {
+                // 처리할 작업 없음
+            }
+        }
     }
 }

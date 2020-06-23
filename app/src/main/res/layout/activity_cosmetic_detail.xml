@@ -209,32 +209,32 @@
             </androidx.recyclerview.widget.RecyclerView>
         </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/cosmeticDetail_reviewLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="invisible"
-        android:background="#ffffff">
-
-        <Button
-            android:id="@+id/cosmeticDetail_writeReviewBtn"
-            android:layout_width="250dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="10dp"
-            android:layout_gravity="center"
-            android:background="@drawable/radius_pink"
-            android:text="리뷰 작성하기"
-            android:textColor="#ffffff"
-            android:textSize="16dp"
-            android:textStyle="bold" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/cosmeticDetail_reviewRV"
+        <LinearLayout
+            android:id="@+id/cosmeticDetail_reviewLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="10dp">
-        </androidx.recyclerview.widget.RecyclerView>
-    </LinearLayout>
+            android:orientation="vertical"
+            android:visibility="invisible"
+            android:background="#ffffff">
+
+            <Button
+                android:id="@+id/cosmeticDetail_writeReviewBtn"
+                android:layout_width="250dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center"
+                android:background="@drawable/radius_pink"
+                android:text="리뷰 작성하기"
+                android:textColor="#ffffff"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/cosmeticDetail_reviewRV"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp">
+            </androidx.recyclerview.widget.RecyclerView>
+        </LinearLayout>
     </FrameLayout>
 </LinearLayout>

@@ -135,7 +135,7 @@ public class WriteReviewActivity extends AppCompatActivity implements View.OnCli
 
             reviewItemData = new ReviewItemData(userData.getId(), userData.getName(), userInfo, writeDate, ratingBar.getRating(), reviewET.getText().toString());
 
-            DatabaseManagement.getInstance().addCosmeticReviewToDatabase(reviewItemData, userData.getEmail(), cosmeticRankItemData.getCosmeticId(), new Callback<Boolean>() {
+            DatabaseManagement.getInstance().addCosmeticReviewToDatabase(reviewItemData, userData.getEmail(), cosmeticRankItemData, new Callback<Boolean>() {
                 @Override
                 public void onCallback(Boolean data) {
                     // 작업 성공시

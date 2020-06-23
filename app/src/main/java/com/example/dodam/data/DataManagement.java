@@ -64,6 +64,56 @@ public class DataManagement {
         return data;
     }
 
+    // 화장품 특정 카테고리만 뽑아서 목록 반환
+    public List<CosmeticRankItemData> getCosmeticFromCategory(List<CosmeticRankItemData> data, String category) {
+        List<CosmeticRankItemData> list;
+
+        list = new ArrayList<>();
+
+        for(CosmeticRankItemData item : data) {
+            if(category.equals(Constant.CATEGORY_ALL)) {
+                list.add(item);
+                continue;
+            }
+
+            if(item.getCategory().equals(category)) {
+                list.add(item);
+            }
+        }
+
+        return list;
+    }
+
+    // 화장품 리뷰중 가장 많은 피부타입이 사용한 화장품 목록 반환
+    public List<CosmeticRankItemData> getCosmeticFromSkinType(List<CosmeticRankItemData> data, String skinType) {
+        List<CosmeticRankItemData> list;
+
+        list = new ArrayList<>();
+
+        for(CosmeticRankItemData item : data) {
+            if(item.getPopularSkinType1().equals(skinType) || item.getPopularSkinType2().equals(skinType)) {
+                list.add(item);
+            }
+        }
+
+        return list;
+    }
+
+    // 화장품 리뷰중 가장 많은 연령대가 사용한 화장품 목록 반환
+    public List<CosmeticRankItemData> getCosmeticFromAge(List<CosmeticRankItemData> data, String age) {
+        List<CosmeticRankItemData> list;
+
+        list = new ArrayList<>();
+
+        for(CosmeticRankItemData item : data) {
+            if(item.getPopularAge().equals(age)) {
+                list.add(item);
+            }
+        }
+
+        return list;
+    }
+
     // 나이를 받아 'xx대'로 돌려주는 메소드
     public String convertAge(int age) {
         String ageStr;

@@ -552,12 +552,21 @@ public class DatabaseManagement {
     }
 
     // DB에 리뷰 추가
-    public void addCosmeticReviewToDatabase(final ReviewItemData reviewItemData, final String userEmail, final String cosmeticId, final Callback<Boolean> callback) {
-        getCosmeticReviewsFromDatabase(cosmeticId, new Callback<List<ReviewItemData>>() {
+    public void addCosmeticReviewToDatabase(final ReviewItemData reviewItemData, final String userEmail, final CosmeticRankItemData cosmeticItem, final Callback<Boolean> callback) {
+        getCosmeticReviewsFromDatabase(cosmeticItem.getCosmeticId(), new Callback<List<ReviewItemData>>() {
             @Override
             public void onCallback(List<ReviewItemData> data) {
                 DocumentReference reviewRef;
+                DocumentReference cosmeticRef;
                 CosmeticReviewItems cosmeticReviewItems;
+                int[] skinType1Count, skinType2Count;
+                int[] ageCount;
+                int popularAge, popularSkinType1, popularSkinType2;
+                int ageIndex, skinType1Index, skinType2Index;
+
+                skinType1Count = new int[4];
+                skinType2Count = new int[4];
+                ageCount = new int[5];
 
                 cosmeticReviewItems = new CosmeticReviewItems();
 
@@ -567,7 +576,178 @@ public class DatabaseManagement {
 
                 cosmeticReviewItems.getReviews().add(reviewItemData);
 
-                reviewRef = database.collection(Constant.DB_COLLECTION_REVIEWS).document(cosmeticId);
+                // 해당 화장품을 가장 많이 사용한 피부타입과 연령대 찾기
+                for(ReviewItemData review : cosmeticReviewItems.getReviews()) {
+                    String[] splitedString;
+
+                    splitedString = review.getUserInfo().split("/");
+
+                    // 연령대
+                    switch(splitedString[0]) {
+                        case "10대 미만":
+                            ageCount[0]++;
+                            break;
+
+                        case "10대":
+                            ageCount[1]++;
+                            break;
+
+                        case "20대":
+                            ageCount[2]++;
+                            break;
+
+                        case "30대":
+                            ageCount[3]++;
+                            break;
+
+                        case "40대 이상":
+                            ageCount[4]++;
+                            break;
+                    }
+
+                    // 피부타입1
+                    switch(splitedString[1]) {
+                        case Constant.SKIN_DRY:
+                            skinType1Count[Constant.SKIN_DRY_INT]++;
+
+                            break;
+
+                        case Constant.SKIN_WEAK_DRY:
+                            skinType1Count[Constant.SKIN_WEAK_DRY_INT]++;
+
+                            break;
+
+                        case Constant.SKIN_WEAK_OILY:
+                            skinType1Count[Constant.SKIN_WEAK_OILY_INT]++;
+
+                            break;
+
+                        case Constant.SKIN_OILY:
+                            skinType1Count[Constant.SKIN_OILY_INT]++;
+
+                            break;
+                    }
+
+                    // 피부타입2
+                    switch(splitedString[2]) {
+                        case Constant.SKIN_SENSITIVE:
+                            skinType2Count[Constant.SKIN_SENSITIVE_INT]++;
+
+                            break;
+
+                        case Constant.SKIN_WEAK_SENSITIVE:
+                            skinType2Count[Constant.SKIN_WEAK_SENSITIVE_INT]++;
+
+                            break;
+
+                        case Constant.SKIN_WEAK_RESISTANT:
+                            skinType2Count[Constant.SKIN_WEAK_RESISTANT_INT]++;
+
+                            break;
+
+                        case Constant.SKIN_RESISTANT:
+                            skinType2Count[Constant.SKIN_RESISTANT_INT]++;
+
+                            break;
+                    }
+                }
+
+                popularAge = ageCount[0];
+                ageIndex = 0;
+
+                for(int i = 1; i < ageCount.length; i++) {
+                    if(popularAge < ageCount[i]) {
+                        popularAge = ageCount[i];
+                        ageIndex = i;
+                    }
+                }
+
+                popularSkinType1 = skinType1Count[0];
+                skinType1Index = 0;
+
+                for(int i = 1; i < skinType1Count.length; i++) {
+                    if(popularSkinType1 < skinType1Count[i]) {
+                        popularSkinType1 = skinType1Count[i];
+                        skinType1Index = i;
+                    }
+                }
+
+                popularSkinType2 = skinType2Count[0];
+                skinType2Index = 0;
+
+                for(int i = 1; i < skinType2Count.length; i++) {
+                    if(popularSkinType2 < skinType2Count[i]) {
+                        popularSkinType2 = skinType2Count[i];
+                        skinType2Index = i;
+                    }
+                }
+
+                switch(ageIndex) {
+                    case 0:
+                        cosmeticItem.setPopularAge("10대 미만");
+                        break;
+
+                    case 1:
+                        cosmeticItem.setPopularAge("10대");
+                        break;
+
+                    case 2:
+                        cosmeticItem.setPopularAge("20대");
+                        break;
+
+                    case 3:
+                        cosmeticItem.setPopularAge("30대");
+                        break;
+
+                    case 4:
+                        cosmeticItem.setPopularAge("40대 이상");
+                        break;
+                }
+
+                switch(skinType1Index) {
+                    case Constant.SKIN_DRY_INT:
+                        cosmeticItem.setPopularSkinType1(Constant.SKIN_DRY);
+
+                        break;
+
+                    case Constant.SKIN_WEAK_DRY_INT:
+                        cosmeticItem.setPopularSkinType1(Constant.SKIN_WEAK_DRY);
+
+                        break;
+
+                    case Constant.SKIN_WEAK_OILY_INT:
+                        cosmeticItem.setPopularSkinType1(Constant.SKIN_WEAK_OILY);
+
+                        break;
+
+                    case Constant.SKIN_OILY_INT:
+                        cosmeticItem.setPopularSkinType1(Constant.SKIN_OILY);
+                }
+
+                switch(skinType2Index) {
+                    case Constant.SKIN_SENSITIVE_INT:
+                        cosmeticItem.setPopularSkinType2(Constant.SKIN_SENSITIVE);
+
+                        break;
+
+                    case Constant.SKIN_WEAK_SENSITIVE_INT:
+                        cosmeticItem.setPopularSkinType2(Constant.SKIN_WEAK_SENSITIVE);
+
+                        break;
+
+                    case Constant.SKIN_WEAK_RESISTANT_INT:
+                        cosmeticItem.setPopularSkinType2(Constant.SKIN_WEAK_RESISTANT);
+
+                        break;
+
+                    case Constant.SKIN_RESISTANT_INT:
+                        cosmeticItem.setPopularSkinType2(Constant.SKIN_RESISTANT);
+                }
+
+                cosmeticRef = database.collection(Constant.DB_COLLECTION_COSMETICS).document(cosmeticItem.getCosmeticId());
+                cosmeticRef.set(cosmeticItem);
+
+                reviewRef = database.collection(Constant.DB_COLLECTION_REVIEWS).document(cosmeticItem.getCosmeticId());
                 reviewRef.set(cosmeticReviewItems)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
@@ -577,11 +757,11 @@ public class DatabaseManagement {
 
                                 userData = DataManagement.getInstance().getUserData();
 
-                                userData.getRegisterReviews().add(cosmeticId);
+                                userData.getRegisterReviews().add(cosmeticItem.getCosmeticId());
 
                                 // 유저 데이터 업데이트
                                 userRef = database.collection(Constant.DB_COLLECTION_USERS).document(userEmail);
-                                userRef.update(Constant.DB_FIELD_REGISTERREVIEWS, userData.getRegisterCosmetics());
+                                userRef.update(Constant.DB_FIELD_REGISTERREVIEWS, userData.getRegisterReviews());
 
                                 callback.onCallback(true);
                             }
