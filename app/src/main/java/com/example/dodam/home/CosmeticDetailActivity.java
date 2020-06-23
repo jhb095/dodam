@@ -30,7 +30,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class CosmeticDetailActivity extends AppCompatActivity implements View.OnClickListener, TabLayout.OnTabSelectedListener {
+public class CosmeticDetailActivity extends AppCompatActivity implements View.OnClickListener, TabLayout.OnTabSelectedListener, ReviewItemRVAdapter.OnItemClickListener {
     private RecyclerView ingredientRV, reviewRV;
     private IngredientItemRVAdapter ingredientItemRVAdapter = null;
     private ReviewItemRVAdapter reviewItemRVAdapter = null;
@@ -131,6 +131,8 @@ public class CosmeticDetailActivity extends AppCompatActivity implements View.On
 
         ingredientItemRVAdapter = new IngredientItemRVAdapter();
         reviewItemRVAdapter = new ReviewItemRVAdapter();
+
+        reviewItemRVAdapter.setOnItemClickListener(this);
 
         ingredientRV.setAdapter(ingredientItemRVAdapter);
         reviewRV.setAdapter(reviewItemRVAdapter);
@@ -278,5 +280,70 @@ public class CosmeticDetailActivity extends AppCompatActivity implements View.On
                 // 처리할 작업 없음
             }
         }
+    }
+
+    // Review 아이템에서 좋아요 또는 싫어요 버튼 클릭
+    @Override
+    public void onItemClick(final View v, int pos) {
+        ReviewItemData item;
+        UserData userData;
+        final Context context;
+
+        context = this;
+
+        userData = DataManagement.getInstance().getUserData();
+        item = reviewItemRVAdapter.getItem(pos);
+
+        // 자신이 쓴 리뷰에는 누를 수 없음
+        if(userData.getId().equals(item.getUserId())) {
+            Toast.makeText(this, "자신이 쓴 리뷰에는 누를 수 없어요.", Toast.LENGTH_SHORT).show();
+
+            return;
+        }
+
+        // 이미 눌렀던 리뷰에는 누를 수 없음
+        for(String userId : item.getPushedLikeDislikeUsers()) {
+            if(userData.getId().equals(userId)) {
+                Toast.makeText(this, "이미 눌렀어요.", Toast.LENGTH_SHORT).show();
+
+                return;
+            }
+        }
+
+        // 좋아요 또는 싫어요 업데이트
+        if(v.getId() == R.id.reviewItem_likeBtn) {
+            TextView likeCount;
+
+            item.setLike(item.getLike() + 1);
+
+            likeCount = ((TextView)((View)((View) v.getParent()).findViewById(R.id.reviewItem_likeCountTV)));
+            likeCount.setText(String.valueOf(item.getLike()));
+        } else {
+            TextView dislikeCount;
+
+            item.setDislike(item.getDislike() + 1);
+
+            dislikeCount = ((TextView)((View)((View) v.getParent()).findViewById(R.id.reviewItem_dislikeCountTV)));
+            dislikeCount.setText(String.valueOf(item.getDislike()));
+        }
+
+        // 누른 목록에 해당 유저 추가
+        item.getPushedLikeDislikeUsers().add(userData.getId());
+
+        // DB에 리뷰 업데이트
+        DatabaseManagement.getInstance().updateCosmeticReviewLikeToDatabase(item, cosmeticRankItemData.getCosmeticId(), new Callback<Boolean>() {
+            @Override
+            public void onCallback(Boolean data) {
+                if(data) {
+                    if (v.getId() == R.id.reviewItem_likeBtn) {
+                        Toast.makeText(context, "좋아요를 눌렀어요.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "싫어요를 눌렀어요.", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(context, "문제가 발생했어요.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 }

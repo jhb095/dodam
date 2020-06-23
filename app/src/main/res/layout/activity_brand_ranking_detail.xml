@@ -38,21 +38,14 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageView
+            android:id="@+id/brandRankingDetail_brandIV"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
-            android:background="@drawable/pink_circle"
-            android:gravity="center">
-
-            <ImageView
-                android:id="@+id/brandRankingDetail_brandIV"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center">
-            </ImageView>
-        </LinearLayout>
+            android:background="@drawable/logo_no_brand_image">
+        </ImageView>
 
         <LinearLayout
             android:layout_width="match_parent"

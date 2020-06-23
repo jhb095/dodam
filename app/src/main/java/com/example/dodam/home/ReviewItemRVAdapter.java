@@ -1,15 +1,19 @@
 package com.example.dodam.home;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dodam.R;
+import com.example.dodam.data.DataManagement;
 import com.example.dodam.data.ReviewItemData;
 
 import java.util.ArrayList;
@@ -43,8 +47,24 @@ public class ReviewItemRVAdapter extends RecyclerView.Adapter<ReviewItemRVAdapte
 
     // Item 항목 하나하나씩 bind, 즉 보여주는 메소드
     @Override
-    public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ItemViewHolder holder, final int position) {
         holder.onBind(listData.get(position));
+        holder.getLikeBtn().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(position != RecyclerView.NO_POSITION && mListener != null) {
+                    mListener.onItemClick(v, position);
+                }
+            }
+        });
+        holder.getDislikeBtn().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(position != RecyclerView.NO_POSITION && mListener != null) {
+                    mListener.onItemClick(v, position);
+                }
+            }
+        });
     }
 
     // RecyclerView의 총 개수 가져오기
@@ -71,24 +91,10 @@ public class ReviewItemRVAdapter extends RecyclerView.Adapter<ReviewItemRVAdapte
         private TextView userNameTV, userInfoTV, writeDateTV, contentTV, likeTV, dislikeTV;
         private ImageView profileIV;
         private ImageView[] starIVs;
+        private Button likeBtn, dislikeBtn;
 
         ItemViewHolder(View itemView) {
             super(itemView);
-
-            // ClickListener 설정
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int pos;
-
-                    pos = getAdapterPosition();
-
-                    // listener 객체의 메서드 호출
-                    if(pos != RecyclerView.NO_POSITION && mListener != null) {
-                        mListener.onItemClick(v, pos);
-                    }
-                }
-            });
 
             userNameTV = itemView.findViewById(R.id.reviewItem_userNameTV);
             userInfoTV = itemView.findViewById(R.id.reviewItem_userInfoTV);
@@ -104,6 +110,9 @@ public class ReviewItemRVAdapter extends RecyclerView.Adapter<ReviewItemRVAdapte
             starIVs[2] = itemView.findViewById(R.id.reviewItem_star3);
             starIVs[3] = itemView.findViewById(R.id.reviewItem_star4);
             starIVs[4] = itemView.findViewById(R.id.reviewItem_star5);
+
+            likeBtn = itemView.findViewById(R.id.reviewItem_likeBtn);
+            dislikeBtn = itemView.findViewById(R.id.reviewItem_dislikeBtn);
         }
 
         void onBind(ReviewItemData data) {
@@ -137,6 +146,14 @@ public class ReviewItemRVAdapter extends RecyclerView.Adapter<ReviewItemRVAdapte
             if(rate < 1) {
                 starIVs[0].setVisibility(View.INVISIBLE);
             }
+        }
+
+        public Button getLikeBtn() {
+            return likeBtn;
+        }
+
+        public Button getDislikeBtn() {
+            return dislikeBtn;
         }
     }
 }

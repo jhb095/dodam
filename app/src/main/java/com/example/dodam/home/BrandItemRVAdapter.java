@@ -1,5 +1,7 @@
 package com.example.dodam.home;
 
+import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,14 +13,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dodam.R;
 import com.example.dodam.data.BrandItemData;
+import com.example.dodam.database.Callback;
+import com.example.dodam.database.DatabaseManagement;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 public class BrandItemRVAdapter extends RecyclerView.Adapter<BrandItemRVAdapter.ItemViewHolder> {
     private ArrayList<BrandItemData> listData = new ArrayList<>(); // adapter에 들어갈 list
     private OnItemClickListener mListener = null;                  // listener 객체
+    private Context context;
 
-    public BrandItemRVAdapter() {
+    public BrandItemRVAdapter(Context context) {
+        this.context = context;
     }
 
     // listener interface
@@ -90,10 +97,21 @@ public class BrandItemRVAdapter extends RecyclerView.Adapter<BrandItemRVAdapter.
             });
 
             brandNameTV = itemView.findViewById(R.id.brandItem_brandNameTV);
+
+            brandIV = itemView.findViewById(R.id.brandItem_brandIV);
         }
 
         void onBind(BrandItemData data) {
             brandNameTV.setText(data.getBrandName());
+
+            DatabaseManagement.getInstance().getBrandImageFromStorage(data.getBrandName(), new Callback<Uri>() {
+                        @Override
+                        public void onCallback(Uri data) {
+                            if(data != null) {
+                                Picasso.with(context).load(data).resize(200, 200).into(brandIV);
+                            }
+                        }
+                    });
         }
     }
 }

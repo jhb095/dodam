@@ -8,6 +8,7 @@ public interface Constant {
     String DB_COLLECTION_BRANDS = "brands";
     String DB_COLLECTION_REVIEWS = "reviews";
     String DB_COLLECTION_COSMETICS = "cosmetics";
+    String DB_COLLECTION_LOGO_BRAND = "logo_brand.png";
     String DB_FIELD_REGISTERCOSMETICS = "registerCosmetics";
     String DB_FIELD_REGISTERREVIEWS = "registerReviews";
 

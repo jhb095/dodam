@@ -213,7 +213,7 @@ public class UserData {
         }
 
         // 설정을 했으니 디비에 등록해야 함
-        DatabaseManagement.getInstance().addUserToDatabase(this, new Callback<Boolean>() {
+        DatabaseManagement.getInstance().updateUserSkinTypeToDatabase(this, new Callback<Boolean>() {
             @Override
             public void onCallback(Boolean data) {
             }

@@ -51,7 +51,7 @@ public class BrandRankingActivity extends AppCompatActivity implements View.OnCl
 
         brandRV.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-        brandItemRVAdapter = new BrandItemRVAdapter();
+        brandItemRVAdapter = new BrandItemRVAdapter(this);
 
         brandItemRVAdapter.setOnItemClickListener(this);
 

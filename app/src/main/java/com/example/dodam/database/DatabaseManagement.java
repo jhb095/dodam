@@ -38,6 +38,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageException;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -174,7 +175,7 @@ public class DatabaseManagement {
     }
 
     // DB에 사용자 피부타입 업데이트
-    public void updateUserSkinTypeToDatabas(UserData user, final Callback<Boolean> callback) {
+    public void updateUserSkinTypeToDatabase(UserData user, final Callback<Boolean> callback) {
         CollectionReference userRef;
 
         // DB Collection에 해당 유저 Document 추가
@@ -194,6 +195,53 @@ public class DatabaseManagement {
                         callback.onCallback(false);
                     }
                 });
+    }
+
+    // DB에 화장품 리뷰(좋아요) 업데이트
+    public void updateCosmeticReviewLikeToDatabase(final ReviewItemData review, final String cosmeticId, final Callback<Boolean> callback) {
+        // 업데이트 하고자 하는 화장퓸 리뷰 목록 가져오기
+        getCosmeticReviewsFromDatabase(cosmeticId, new Callback<List<ReviewItemData>>() {
+            @Override
+            public void onCallback(List<ReviewItemData> data) {
+                DocumentReference reviewRef;
+                CosmeticReviewItems cosmeticReviewItems;
+
+                cosmeticReviewItems = new CosmeticReviewItems();
+
+                if(data != null) {
+                    // 리뷰 목록에서 현재 리뷰에 해당하는 것을 지우고 좋아요 또는 싫어요를 고친 것을 집어넣기
+                    for(ReviewItemData item : data) {
+                        if(item.getUserId().equals(review.getUserId())) {
+                            data.remove(item);
+
+                            break;
+                        }
+                    }
+
+                    cosmeticReviewItems.setReviews(data);
+                }
+
+                cosmeticReviewItems.getReviews().add(review);
+
+                reviewRef = database.collection(Constant.DB_COLLECTION_REVIEWS).document(cosmeticId);
+                reviewRef.set(cosmeticReviewItems)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()) {
+                                    callback.onCallback(true);
+                                } else {
+                                    callback.onCallback(false);
+                                }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        callback.onCallback(false);
+                    }
+                });
+            }
+        });
     }
 
     // DB에 등록된 성분인지 확인
@@ -241,6 +289,10 @@ public class DatabaseManagement {
 
         alertDialog = builder.create();
         alertDialog.show();
+
+        // 공백 제거후 소문자로
+        brandName = brandName.replace(" ", "");
+        brandName = brandName.toLowerCase();
 
         // 브랜드 명 폴더에 화장품 명 이름으로 저장
         brandRef = FirebaseStorage.getInstance().getReference().child(Constant.DB_COLLECTION_BRANDS).child(brandName).child(cosmeticName + ".jpg");
@@ -436,11 +488,49 @@ public class DatabaseManagement {
         FirebaseStorage storage;
         StorageReference storageRef;
 
+        // 공백 제거후 소문자로
+        brandName = brandName.replace(" ", "");
+        brandName = brandName.toLowerCase();
+
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReferenceFromUrl("gs://dodam-a1823.appspot.com")
                 .child(Constant.DB_COLLECTION_BRANDS)
                 .child(brandName)
                 .child(cosmeticName + ".jpg");
+
+        storageRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if(task.isSuccessful()) {
+                    Uri uri = task.getResult();
+
+                    callback.onCallback(uri);
+                } else {
+                    callback.onCallback(null);
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                callback.onCallback(null);
+            }
+        });
+    }
+
+    // 브랜드 이미지 가져오기
+    public void getBrandImageFromStorage(String brandName, final Callback<Uri> callback) {
+        FirebaseStorage storage;
+        StorageReference storageRef;
+
+        // 공백 제거 후 소문자로
+        brandName = brandName.replace(" ", "");
+        brandName = brandName.toLowerCase();
+
+        storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReferenceFromUrl("gs://dodam-a1823.appspot.com")
+                .child(Constant.DB_COLLECTION_BRANDS)
+                .child(brandName)
+                .child(Constant.DB_COLLECTION_LOGO_BRAND);
 
         storageRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
             @Override
@@ -546,6 +636,7 @@ public class DatabaseManagement {
             @Override
             public void onCallback(List<CosmeticRankItemData> data) {
                 DocumentReference brandRef;
+                DocumentReference cosmeticRef;
                 BrandCosmeticItems brandCosmeticItems;
 
                 brandCosmeticItems = new BrandCosmeticItems();
@@ -581,6 +672,11 @@ public class DatabaseManagement {
                         callback.onCallback(false);
                     }
                 });
+
+                // 해당 제품 경로DB에도 갱신해야함
+                // DB 화장품 경로에도 추가
+                cosmeticRef = database.collection(Constant.DB_COLLECTION_COSMETICS).document(cosmeticRankItemData.getCosmeticId());
+                cosmeticRef.set(cosmeticRankItemData);
             }
         });
     }

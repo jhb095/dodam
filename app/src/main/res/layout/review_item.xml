@@ -118,12 +118,12 @@
         android:orientation="horizontal"
         android:gravity="right">
         
-        <ImageView
-            android:id="@+id/reviewItem_likeIV"
+        <Button
+            android:id="@+id/reviewItem_likeBtn"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:background="@drawable/icon_like">
-        </ImageView>
+        </Button>
 
         <TextView
             android:id="@+id/reviewItem_likeCountTV"
@@ -136,13 +136,13 @@
             android:textColor="#ef889a">
         </TextView>
 
-        <ImageView
-            android:id="@+id/reviewItem_dislikeIV"
+        <Button
+            android:id="@+id/reviewItem_dislikeBtn"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginLeft="10dp"
             android:background="@drawable/icon_dislike">
-        </ImageView>
+        </Button>
 
         <TextView
             android:id="@+id/reviewItem_dislikeCountTV"

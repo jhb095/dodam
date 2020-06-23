@@ -4,23 +4,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.dodam.R;
-import com.example.dodam.data.BrandCosmeticItems;
-import com.example.dodam.data.BrandItemData;
 import com.example.dodam.data.CosmeticRankItemData;
 import com.example.dodam.data.DataManagement;
 import com.example.dodam.database.Callback;
 import com.example.dodam.database.DatabaseManagement;
+import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class BrandRankingDetailActivity extends AppCompatActivity implements View.OnClickListener, CosmeticRankItemRVAdapter.OnItemClickListener {
     private RecyclerView cosmeticRV;
@@ -73,10 +72,22 @@ public class BrandRankingDetailActivity extends AppCompatActivity implements Vie
     // ImageView 초기화
     private void initializeImageView() {
         ImageView backIV;
-        ImageView brandIV;
+        final ImageView brandIV;
+        final Context context;
 
         backIV = findViewById(R.id.brandRankingDetail_backIV);
         brandIV = findViewById(R.id.brandRankingDetail_brandIV);
+
+        context = this;
+
+        DatabaseManagement.getInstance().getBrandImageFromStorage(brandName, new Callback<Uri>() {
+            @Override
+            public void onCallback(Uri data) {
+                if(data != null) {
+                    Picasso.with(context).load(data).resize(200, 200).into(brandIV);
+                }
+            }
+        });
 
         backIV.setOnClickListener(this);
     }

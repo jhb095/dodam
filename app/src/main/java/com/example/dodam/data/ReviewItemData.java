@@ -1,6 +1,10 @@
 package com.example.dodam.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ReviewItemData {
+    private String userId;      // 유저 식별자
     private String userName;    // 유저 이름
     private String userInfo;    // 유저 정보
     private String writeDate;   // 작성일
@@ -8,13 +12,15 @@ public class ReviewItemData {
     private String content;     // 리뷰 내용
     private int like;           // 좋아요 수
     private int dislike;        // 싫어요 수
+    private List<String> pushedLikeDislikeUsers;    // 좋아요 또는 싫어요 누른 유저Id 목록
 
     // Firebase용
     public ReviewItemData() {
-
+        pushedLikeDislikeUsers = new ArrayList<>();
     }
 
-    public ReviewItemData(String userName, String userInfo, String writeDate, float rate, String content) {
+    public ReviewItemData(String userId, String userName, String userInfo, String writeDate, float rate, String content) {
+        this.userId = userId;
         this.userName = userName;
         this.userInfo = userInfo;
         this.writeDate = writeDate;
@@ -23,6 +29,18 @@ public class ReviewItemData {
 
         like = 0;
         dislike = 0;
+
+        pushedLikeDislikeUsers = new ArrayList<>();
+    }
+
+    // 유저 식별자 설정
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    // 유저 식별자 반환
+    public String getUserId() {
+        return userId;
     }
 
     // 유저 이름 설정
@@ -70,4 +88,14 @@ public class ReviewItemData {
 
     // 싫어요 수 반환
     public int getDislike() { return dislike; }
+
+    // 좋아요 또는 싫어요를 누른 유저 목록 설정
+    public void setPushedLikeDislikeUsers(List<String> pushedLikeDislikeUsers) {
+        this.pushedLikeDislikeUsers = pushedLikeDislikeUsers;
+    }
+
+    // 좋아요 또는 싫어요를 누른 유저 목록 반환
+    public List<String> getPushedLikeDislikeUsers() {
+        return pushedLikeDislikeUsers;
+    }
 }

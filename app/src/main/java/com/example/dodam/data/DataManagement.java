@@ -1,6 +1,7 @@
 package com.example.dodam.data;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -17,6 +18,7 @@ public class DataManagement {
     // 생성자
     private DataManagement() {
         userData = null;
+        cosmetics = new ArrayList<>();
     }
 
     // 객체 가져오기
