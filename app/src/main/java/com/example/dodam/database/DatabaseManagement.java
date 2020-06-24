@@ -181,7 +181,7 @@ public class DatabaseManagement {
         // DB Collection에 해당 유저 Document 추가
         userRef = database.collection(Constant.DB_COLLECTION_USERS);
         userRef.document(user.getEmail())
-                .update("SkinType1", user.getSkinType1(), "SkinType2", user.getSkinType2())
+                .set(user)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

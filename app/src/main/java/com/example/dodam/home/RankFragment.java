@@ -54,9 +54,7 @@ public class RankFragment extends Fragment implements View.OnClickListener, TabL
     public void onResume() {
         super.onResume();
 
-        if(categoryRVAdapter == null) {
-            initializeRecyclerView();
-        }
+        initializeRecyclerView();
 
         refreshCategory(Constant.CATEGORY_ALL);
         refreshSkinType(Constant.SKIN_DRY);
@@ -130,7 +128,6 @@ public class RankFragment extends Fragment implements View.OnClickListener, TabL
         categoryRVAdapter.delAllItem();
 
         cosmetics = DataManagement.getInstance().getCosmetics();
-
         cosmetics = DataManagement.getInstance().getCosmeticFromCategory(cosmetics, category);
         cosmetics = DataManagement.getInstance().sortByCosemticRate(cosmetics);
 

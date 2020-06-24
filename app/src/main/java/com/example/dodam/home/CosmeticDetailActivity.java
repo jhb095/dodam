@@ -78,6 +78,9 @@ public class CosmeticDetailActivity extends AppCompatActivity implements View.On
     // TextView 초기화
     private void initializeTextView() {
         TextView brandNameTV, cosmeticNameTV, rateTV, rankTV;
+        int rank;
+
+        rank = DataManagement.getInstance().getCosmeticRank(cosmeticRankItemData.getCosmeticId());
 
         brandNameTV = findViewById(R.id.cosmeticDetail_brandNameTV);
         cosmeticNameTV = findViewById(R.id.cosmeticDetail_cosmeticNameTV);
@@ -87,7 +90,7 @@ public class CosmeticDetailActivity extends AppCompatActivity implements View.On
         brandNameTV.setText(cosmeticRankItemData.getBrandName());
         cosmeticNameTV.setText(cosmeticRankItemData.getCosmeticName());
         rateTV.setText(String.valueOf(cosmeticRankItemData.getRate()));
-        rankTV.setText(cosmeticRankItemData.getRank() + "위");
+        rankTV.setText("전체 " + rank + "위");
     }
 
     // ImageView 초기화

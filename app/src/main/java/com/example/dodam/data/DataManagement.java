@@ -64,6 +64,26 @@ public class DataManagement {
         return data;
     }
 
+    // 랭킹 구하기
+    public int getCosmeticRank(String cosmeticId) {
+        List<CosmeticRankItemData> sorted;
+        int rank;
+
+        rank = 1;
+
+        sorted = sortByCosemticRate(cosmetics);
+
+        for(CosmeticRankItemData cosmetic : sorted) {
+            if(cosmetic.getCosmeticId().equals(cosmeticId)) {
+                return rank;
+            }
+
+            rank++;
+        }
+
+        return 0;
+    }
+
     // 화장품 특정 카테고리만 뽑아서 목록 반환
     public List<CosmeticRankItemData> getCosmeticFromCategory(List<CosmeticRankItemData> data, String category) {
         List<CosmeticRankItemData> list;
