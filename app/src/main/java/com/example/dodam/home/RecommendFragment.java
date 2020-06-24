@@ -11,8 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.dodam.R;
 import com.example.dodam.data.Constant;
@@ -45,9 +47,6 @@ public class RecommendFragment extends Fragment implements View.OnClickListener,
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_recommend, container, false);
 
-        // 필요한 항목 초기화
-        initialize();
-
         return root;
     }
 
@@ -55,11 +54,27 @@ public class RecommendFragment extends Fragment implements View.OnClickListener,
     public void onResume() {
         super.onResume();
 
-        super.onResume();
+        // 모든 제품 다시 받아오기
+        // 전체 화장품 목록을 받아와서 앱상 데이터에 추가
+        DatabaseManagement.getInstance().getCosmeticsFromDatabase(new Callback<List<CosmeticRankItemData>>() {
+            @Override
+            public void onCallback(List<CosmeticRankItemData> data) {
+                if (data == null) {
+                    data = new ArrayList<>();
+                }
+
+                // 필요한 항목 초기화
+                initialize();
+
+                // 앱상 데이터에 추가
+                DataManagement.getInstance().setCosmetics(data);
+
+                refreshCorrectCosmetic();
+                refreshIncorrectCosmetic();
+            }
+        });
 
         initializeRecyclerView();
-
-        refreshIncorrectCosmetic();
     }
 
     // 필요한 항목 초기화
@@ -68,7 +83,6 @@ public class RecommendFragment extends Fragment implements View.OnClickListener,
 
         initializeTextView();
         initializeButton();
-        initializeRecyclerView();
     }
 
     // TextView 초기화
@@ -113,6 +127,49 @@ public class RecommendFragment extends Fragment implements View.OnClickListener,
         correctCosmeticRV.setAdapter(correctCosmeticRVAdapter);
         incorrectCosmeticRV.setAdapter(incorrectCosmeticRVAdapter);
         incorrectIngredientRV.setAdapter(incorrectIngredientRVAdapter);
+    }
+
+    // 안 맞는 성분을 제외한 화장품 목록 새로고침
+    private void refreshCorrectCosmetic() {
+        final ImageView noIV;
+
+        noIV = root.findViewById(R.id.recommend_correctNoIV);
+
+        // 먼저 목록 지우기
+        correctCosmeticRVAdapter.delAllItem();
+
+        // 없으면 이미지뷰를 띄움
+        if(userData.getIncorrectIngredients().size() == 0) {
+            correctCosmeticRV.setVisibility(View.INVISIBLE);
+            noIV.setVisibility(View.VISIBLE);
+        } else {
+            noIV.setVisibility(View.INVISIBLE);
+            correctCosmeticRV.setVisibility(View.VISIBLE);
+
+            DatabaseManagement.getInstance().getUserCorrectCosmeticFromDatabase(new Callback<List<CosmeticRankItemData>>() {
+                @Override
+                public void onCallback(List<CosmeticRankItemData> data) {
+                    if (data != null) {
+                        if(data.size() == 0) {
+                            correctCosmeticRV.setVisibility(View.INVISIBLE);
+                            noIV.setVisibility(View.VISIBLE);
+
+                            return;
+                        }
+
+                        // 한 항목씩 추가
+                        for (CosmeticRankItemData cosmeticRankItemData : data) {
+                            cosmeticRankItemData.setRank(1);
+
+                            correctCosmeticRVAdapter.addItem(cosmeticRankItemData);
+                        }
+
+                        // 변경됬음을 알림
+                        correctCosmeticRVAdapter.notifyDataSetChanged();
+                    }
+                }
+            });
+        }
     }
 
     // 안 맞았던 제품 새로고침
@@ -160,6 +217,12 @@ public class RecommendFragment extends Fragment implements View.OnClickListener,
 
             // 분석하기
             case R.id.recommend_analysisBtn:
+                // 나랑 안 맞는 제품 2개 이상일때만 가능
+                if(userData.getIncorrectCosmetics().size() < 2) {
+                    Toast.makeText(getActivity(), "안 맞는 제품을 2개 이상 등록해주세요.", Toast.LENGTH_SHORT).show();
+
+                    return;
+                }
                 analysisCosmetic();
 
                 break;
@@ -176,10 +239,12 @@ public class RecommendFragment extends Fragment implements View.OnClickListener,
             public void onCallback(List<CosmeticRankItemData> data) {
                 if(data != null && data.size() > 0) {
                     List<IngredientItemData> temp, incorrectIngredients;
+                    List<String> ingredientNames;
 
                     // 먼저 한 화장품의 성분을 임시 list에 모두 집어넣고 이후에 중복되는 것을 맞지 않는 성분 list에 넣는다.
                     temp = data.get(0).getIngredients();
                     incorrectIngredients = new ArrayList<>();
+                    ingredientNames = new ArrayList<>();
 
                     for(int i = 1; i < data.size(); i++) {
                         for(IngredientItemData ingredient : data.get(i).getIngredients()) {
@@ -187,7 +252,6 @@ public class RecommendFragment extends Fragment implements View.OnClickListener,
 
                             // 먼저 상관없는 성분이면 제외
                             for(String fineIngredient : Constant.FINE_INGREDIENTS) {
-                                System.out.println("테스트: " + fineIngredient + " == " + ingredient.getIngredientName());
                                 if(ingredient.getIngredientName().equals(fineIngredient)) {
                                     check = 1;
 
@@ -201,6 +265,7 @@ public class RecommendFragment extends Fragment implements View.OnClickListener,
 
                             // 포함하면 중복된 것이므로 맞지 않는 성분에 추가
                             if(temp.contains(ingredient)) {
+                                ingredientNames.add(ingredient.getIngredientName());
                                 incorrectIngredients.add(ingredient);
                             } else {
                                 // 임시 list에 추가
@@ -214,8 +279,19 @@ public class RecommendFragment extends Fragment implements View.OnClickListener,
                         incorrectIngredientRVAdapter.addItem(ingredient);
                     }
 
+                    // 유저 정보에 설정하고 DB 업데이트
+                    userData.setIncorrectIngredients(ingredientNames);
+                    DatabaseManagement.getInstance().updateUserSkinTypeToDatabase(userData, new Callback<Boolean>() {
+                        @Override
+                        public void onCallback(Boolean data) {
+                        }
+                    });
+
                     // 변경 됬음을 알림
                     incorrectIngredientRVAdapter.notifyDataSetChanged();
+
+                    // 새로고침
+                    refreshCorrectCosmetic();
                 }
             }
         });

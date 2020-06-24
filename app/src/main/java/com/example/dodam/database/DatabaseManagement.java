@@ -19,7 +19,9 @@ import com.example.dodam.data.Constant;
 import com.example.dodam.data.CosmeticRankItemData;
 import com.example.dodam.data.CosmeticReviewItems;
 import com.example.dodam.data.DataManagement;
+import com.example.dodam.data.IngredientDocument;
 import com.example.dodam.data.IngredientItem;
+import com.example.dodam.data.IngredientItemData;
 import com.example.dodam.data.ReviewItemData;
 import com.example.dodam.data.UserData;
 
@@ -45,6 +47,7 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 // 데이터베이스 전반적인 것을 다루는 클래스(싱글톤)
@@ -245,23 +248,42 @@ public class DatabaseManagement {
     }
 
     // DB에 등록된 성분인지 확인
-    public void isExistIngredientFromDatabase(String ingredientName, final Callback<Boolean> callback) {
-        DocumentReference ingredientRef;
+    public void isExistIngredientFromDatabase(final String ingredientName, final Callback<Boolean> callback) {
+        CollectionReference ingredientRef;
 
-        ingredientRef = database.collection(Constant.DB_COLLECTION_INGREDIENTS).document(ingredientName);
-        ingredientRef.get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        // 존재하므로 true
-                        if(documentSnapshot.getData() != null) {
-                            callback.onCallback(true);
-                        } else {
-                            // 존재하지 않으므로 false
-                            callback.onCallback(false);
+        ingredientRef = database.collection(Constant.DB_COLLECTION_INGREDIENTS);
+        ingredientRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()) {
+                    for(QueryDocumentSnapshot document : task.getResult()) {
+                        IngredientDocument ingredientDocument;
+                        List<IngredientItem> ingredientItems;
+
+                        ingredientDocument = document.toObject(IngredientDocument.class);
+
+                        ingredientItems = ingredientDocument.getIngredientItems();
+
+                        for(IngredientItem ingredientItem : ingredientItems) {
+                            if(ingredientItem.getName_ko().equals(ingredientName) || ingredientItem.getName_en().equals(ingredientName)) {
+                                callback.onCallback(true);
+
+                                return;
+                            }
                         }
                     }
-                });
+
+                    callback.onCallback(false);
+                } else {
+                    callback.onCallback(false);
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                callback.onCallback(false);
+            }
+        });
     }
 
     // Cloud Storage에 이미지 파일 등록
@@ -861,12 +883,66 @@ public class DatabaseManagement {
         });
     }
 
+    // 해당 유저와 안맞는 성분을 제외한 화장품 목록 가져오기
+    public void getUserCorrectCosmeticFromDatabase(final Callback<List<CosmeticRankItemData>> callback) {
+        CollectionReference cosmeticRef;
+
+        cosmeticRef = database.collection(Constant.DB_COLLECTION_COSMETICS);
+        cosmeticRef.get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()) {
+                            List<CosmeticRankItemData> cosmetics;
+                            List<String> incorrectIngredientNames;
+                            UserData userData;
+
+                            userData = DataManagement.getInstance().getUserData();
+                            incorrectIngredientNames = userData.getIncorrectIngredients();
+
+                            cosmetics = new ArrayList<>();
+
+                            for(QueryDocumentSnapshot document : task.getResult()) {
+                                CosmeticRankItemData cosmetic;
+                                int flag = 0;
+
+                                cosmetic = document.toObject(CosmeticRankItemData.class);
+
+                                // 유저의 안맞는 성분과 비교
+                                for(IngredientItemData cosmeticIngredient : cosmetic.getIngredients()) {
+                                    // 안맞는 성분이 포함되어있다면 제외
+                                    if(incorrectIngredientNames.contains(cosmeticIngredient.getIngredientName())) {
+                                        flag = 1;
+                                        break;
+                                    }
+                                }
+
+                                if(flag == 1) {
+                                    continue;
+                                }
+
+                                cosmetics.add(cosmetic);
+                            }
+
+                            callback.onCallback(cosmetics);
+                        } else {
+                            callback.onCallback(null);
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                callback.onCallback(null);
+            }
+        });
+    }
+
     // 해당 유저가 올린 화장품 목록 가져오기(flag가 0이면 전체, 1이면 안맞는 화장품)
     public void getUserCosmeticFromDatabase(final int flag, final Callback<List<CosmeticRankItemData>> callback) {
-        CollectionReference reviewRef;
+        CollectionReference cosmeticRef;
 
-        reviewRef = database.collection(Constant.DB_COLLECTION_COSMETICS);
-        reviewRef.get()
+        cosmeticRef = database.collection(Constant.DB_COLLECTION_COSMETICS);
+        cosmeticRef.get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -886,19 +962,19 @@ public class DatabaseManagement {
                                 userCosmeticId = userData.getIncorrectCosmetics();
                             }
 
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    CosmeticRankItemData data;
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                CosmeticRankItemData data;
 
-                                    data = document.toObject(CosmeticRankItemData.class);
+                                data = document.toObject(CosmeticRankItemData.class);
 
-                                    for (String cosmeticId : userCosmeticId) {
-                                        if (cosmeticId.equals(data.getCosmeticId())) {
-                                            cosmetics.add(data);
+                                for (String cosmeticId : userCosmeticId) {
+                                    if (cosmeticId.equals(data.getCosmeticId())) {
+                                        cosmetics.add(data);
 
-                                            break;
-                                        }
+                                        break;
                                     }
                                 }
+                            }
 
                             callback.onCallback(cosmetics);
                         } else {
@@ -913,14 +989,13 @@ public class DatabaseManagement {
         });
     }
 
-/*
-    화장품에 들어가는 성분 DB 등록용
-    public void addIngredientToDatabase(IngredientItem ingredientItem) {
-        CollectionReference ingredientRef;
 
-        ingredientRef = database.collection(Constant.DB_COLLECTION_INGREDIENTS);
-        ingredientRef.document(ingredientItem.getName_ko())
-                .set(ingredientItem)
+    // 화장품에 들어가는 성분 DB 등록용
+    public void addIngredientToDatabase(IngredientDocument ingredientItem, int number) {
+        DocumentReference ingredientRef;
+
+        ingredientRef = database.collection(Constant.DB_COLLECTION_INGREDIENTS).document(String.valueOf(number));
+        ingredientRef.set(ingredientItem)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -930,8 +1005,8 @@ public class DatabaseManagement {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         System.out.println("디비 실패");
+                        e.printStackTrace();
                     }
                 });
     }
- */
 }

@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.dodam.R;
+import com.example.dodam.data.IngredientDocument;
 import com.example.dodam.data.IngredientItem;
 import com.example.dodam.database.DatabaseManagement;
 
@@ -23,6 +24,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SignInUpActivity extends AppCompatActivity implements View.OnClickListener {
     private int REQUEST_SIGNUP = 1;
@@ -57,15 +60,15 @@ public class SignInUpActivity extends AppCompatActivity implements View.OnClickL
 /*
         testAsyncTask test;
         test = new testAsyncTask();
-        test.execute();*/
+        test.execute();
+*/
     }
-
-    /*
+/*
     public class testAsyncTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... strings) {
             try {
-                loadData("C:/Users/janghyobin/Desktop/test.csv");
+                loadData();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -73,13 +76,16 @@ public class SignInUpActivity extends AppCompatActivity implements View.OnClickL
             return null;
         }
     }
-    */
 
-    /*
     // csv파일에서 데이터를 읽어 모든 데이터를 등록한다.
-    public void loadData(String dataPath) throws IOException {
+    public void loadData() throws IOException {
         BufferedReader br;
         String lineString;
+        IngredientDocument ingredients;
+        int number = 0;
+
+        ingredients = new IngredientDocument();
+
         InputStream is = this.getResources().openRawResource(R.raw.test);
 
         // csv파일 읽어오기
@@ -95,19 +101,25 @@ public class SignInUpActivity extends AppCompatActivity implements View.OnClickL
             IngredientItem ingredientItem;
             ingredientItem = new IngredientItem(splitedString[0], splitedString[1]);
 
-            DatabaseManagement.getInstance().addIngredientToDatabase(ingredientItem);
+            ingredients.getIngredientItems().add(ingredientItem);
+
+            if(ingredients.getIngredientItems().size() == 100) {
+                DatabaseManagement.getInstance().addIngredientToDatabase(ingredients, number++);
+
+                ingredients = new IngredientDocument();
+            }
+            /*
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }
-        }
-
-        System.out.println("끝");
+            }*/
+/*        }
 
         // 버퍼 리더 닫기
         br.close();
-    }*/
+    }
+ */
 
     // 권한 요청
     private void requestPermission() {

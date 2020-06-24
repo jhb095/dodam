@@ -54,9 +54,7 @@
                 android:textSize="18dp"
                 android:textColor="@color/colorPink"
                 android:textStyle="bold">
-
             </TextView>
-
         </LinearLayout>
 
         <LinearLayout
@@ -85,12 +83,25 @@
 
             </TextView>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recommend_correctCosmeticRV"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp">
-            </androidx.recyclerview.widget.RecyclerView>
+                android:layout_height="wrap_content">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recommend_correctCosmeticRV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp">
+                </androidx.recyclerview.widget.RecyclerView>
+
+                <ImageView
+                    android:id="@+id/recommend_correctNoIV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="invisible"
+                    android:background="@drawable/image_no_cosmetic">
+                </ImageView>
+            </FrameLayout>
         </LinearLayout>
 
         <LinearLayout

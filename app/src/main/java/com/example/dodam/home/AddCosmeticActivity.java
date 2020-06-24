@@ -631,7 +631,7 @@ public class AddCosmeticActivity extends AppCompatActivity implements View.OnCli
         // 카테고리 먼저 선택
         builder = new AlertDialog.Builder(this);
 
-        selectedItem = new ArrayList<String>();
+        selectedItem = new ArrayList<>();
 
         builder.setTitle("화장품 카테고리 선택");
         builder.setSingleChoiceItems(categoryItems, 0, new DialogInterface.OnClickListener() {
@@ -646,7 +646,12 @@ public class AddCosmeticActivity extends AppCompatActivity implements View.OnCli
                 TextView cosmeticCategoryTV;
 
                 cosmeticCategoryTV = findViewById(R.id.addCosmetic_cosmeticCategoryTV);
-                cosmeticCategoryTV.setText(selectedItem.get(0));
+
+                if(selectedItem.size() == 0) {
+                    cosmeticCategoryTV.setText(categoryItems[0]);
+                } else {
+                    cosmeticCategoryTV.setText(selectedItem.get(0));
+                }
 
                 callback.onCallback(true);
             }

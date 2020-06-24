@@ -4,6 +4,11 @@ public class IngredientItem {
     private String name_ko; // 성분 한글 명
     private String name_en; // 성분 영문 명
 
+    // Firebase 용
+    public IngredientItem() {
+
+    }
+
     public IngredientItem(String name_ko, String name_en) {
         this.name_ko = name_ko;
         this.name_en = name_en;
