@@ -1,5 +1,7 @@
 package com.example.dodam.data;
 
+import androidx.annotation.Nullable;
+
 import java.io.Serializable;
 
 public class IngredientItemData implements Serializable {
@@ -24,5 +26,14 @@ public class IngredientItemData implements Serializable {
     // DB 존재 여부 반환
     public Boolean getIsExist() {
         return isExist;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        IngredientItemData i;
+
+        i = (IngredientItemData) obj;
+
+        return ingredientName.equals(i.ingredientName);
     }
 }

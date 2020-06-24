@@ -188,6 +188,8 @@ public class HomeActivity extends AppCompatActivity implements CosmeticRankItemR
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
         if(resultCode == RESULT_OK) {
             if(requestCode == REQUEST_COSMETIC_DETAIL) {
                 // 처리할 작업 없음

@@ -19,11 +19,13 @@ public class UserData {
     private String  signUpDate;  // 사용자 가입날짜
     private List<String> registerCosmetics;   // 사용자가 등록한 화장품들(화장품 식별자로 구별)
     private List<String> registerReviews;   // 사용자가 등록한 리뷰들(화장품 식별자로 구별)
+    private List<String> incorrectCosmetics;    // 사용자와 맞지 않는 화장품
 
     // 기본 생성자(Firebase)
     public UserData() {
         registerCosmetics = new ArrayList<>();
         registerReviews = new ArrayList<>();
+        incorrectCosmetics = new ArrayList<>();
     }
 
     // 생성자
@@ -53,6 +55,7 @@ public class UserData {
 
         registerCosmetics = new ArrayList<>();
         registerReviews = new ArrayList<>();
+        incorrectCosmetics = new ArrayList<>();
     }
 
     // 사용자 나이 반환
@@ -108,6 +111,9 @@ public class UserData {
     // 사용자가 등록한 리뷰 목록 반환
     public List<String> getRegisterReviews() { return registerReviews; }
 
+    // 사용자와 맞지 않는 화장품 목록 반환
+    public List<String> getIncorrectCosmetics() { return incorrectCosmetics; }
+
     // 사용자 나이 설정
     public void setAge(int age) {
         this.age = age;
@@ -161,6 +167,11 @@ public class UserData {
     // 사용자가 등록한 리뷰 목록 설정
     public void setRegisterReviews(List<String> registerReviews) {
         this.registerReviews = registerReviews;
+    }
+
+    // 사용자와 맞지않는 화장품 추가
+    public void setIncorrectCosmetics(List<String> incorrectCosmetics) {
+        this.incorrectCosmetics = incorrectCosmetics;
     }
 
     // 생년월일로부터 나이 구하기

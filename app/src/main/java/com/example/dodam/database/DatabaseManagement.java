@@ -861,6 +861,58 @@ public class DatabaseManagement {
         });
     }
 
+    // 해당 유저가 올린 화장품 목록 가져오기(flag가 0이면 전체, 1이면 안맞는 화장품)
+    public void getUserCosmeticFromDatabase(final int flag, final Callback<List<CosmeticRankItemData>> callback) {
+        CollectionReference reviewRef;
+
+        reviewRef = database.collection(Constant.DB_COLLECTION_COSMETICS);
+        reviewRef.get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()) {
+                            UserData userData;
+                            List<String> userCosmeticId;
+                            List<CosmeticRankItemData> cosmetics;
+
+                            cosmetics = new ArrayList<>();
+
+                            userData = DataManagement.getInstance().getUserData();
+                            userCosmeticId = null;
+
+                            if(flag == 0) {
+                                userCosmeticId = userData.getRegisterCosmetics();
+                            } else if(flag == 1) {
+                                userCosmeticId = userData.getIncorrectCosmetics();
+                            }
+
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    CosmeticRankItemData data;
+
+                                    data = document.toObject(CosmeticRankItemData.class);
+
+                                    for (String cosmeticId : userCosmeticId) {
+                                        if (cosmeticId.equals(data.getCosmeticId())) {
+                                            cosmetics.add(data);
+
+                                            break;
+                                        }
+                                    }
+                                }
+
+                            callback.onCallback(cosmetics);
+                        } else {
+                            callback.onCallback(null);
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                callback.onCallback(null);
+            }
+        });
+    }
+
 /*
     화장품에 들어가는 성분 DB 등록용
     public void addIngredientToDatabase(IngredientItem ingredientItem) {

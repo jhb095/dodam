@@ -46,4 +46,8 @@ public interface Constant {
     String CATEGORY_MASKANDPACK = "마스크/팩";
     String CATEGORY_SUNCARE     = "선케어";
     String CATEGORY_BASE        = "베이스";
+
+    // 화장품 성분 관련
+    // 해당 성분은 제외 시키지 않아도 됨
+     String[] FINE_INGREDIENTS = {"정제수"};
 }

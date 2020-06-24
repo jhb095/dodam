@@ -86,7 +86,7 @@
             </TextView>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recommend_incorrectIngredientRV"
+                android:id="@+id/recommend_correctCosmeticRV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp">
@@ -173,23 +173,12 @@
             android:layout_height="wrap_content"
             android:background="@drawable/border">
 
-        <ImageView
-            android:id="@+id/IV"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/icon_ingredient">
-        </ImageView>
-
-        <TextView
-            android:layout_toRightOf="@+id/IV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:textSize="18sp"
-            android:textColor="@color/colorBlack"
-            android:textStyle="bold"
-            android:text="1,2-헥산다이올; 1,2-헥산디올(구명칭)">
-        </TextView>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recommend_incorrectIngredientRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+            </androidx.recyclerview.widget.RecyclerView>
         </RelativeLayout>
     </LinearLayout>
 </ScrollView>

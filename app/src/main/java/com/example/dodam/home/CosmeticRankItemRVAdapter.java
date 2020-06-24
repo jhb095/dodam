@@ -105,10 +105,12 @@ public class CosmeticRankItemRVAdapter extends RecyclerView.Adapter<CosmeticRank
 
         void onBind(CosmeticRankItemData data) {
             // 랭킹이 0이면 안보이게
+
             if(data.getRank() == 0) {
                 rankTV.setVisibility(View.INVISIBLE);
             } else {
-                rankTV.setText(String.valueOf(data.getRank()));
+                //rankTV.setText(String.valueOf(data.getRank()));
+                rankTV.setText(String.valueOf(listData.indexOf(data) + 1));
             }
 
             brandNameTV.setText(data.getBrandName());

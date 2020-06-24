@@ -60,6 +60,13 @@ public class CosmeticDetailActivity extends AppCompatActivity implements View.On
         refreshIngredients();
     }
 
+    @Override
+    public void onBackPressed() {
+        setResult(RESULT_OK);
+
+        super.onBackPressed();
+    }
+
     // 필요한 항목 초기화
     private void initialize() {
         Intent intent;

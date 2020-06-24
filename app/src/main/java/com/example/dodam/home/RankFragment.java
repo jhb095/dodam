@@ -1,5 +1,6 @@
 package com.example.dodam.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -11,7 +12,9 @@ import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.example.dodam.R;
@@ -24,10 +27,13 @@ import com.google.android.material.tabs.TabLayout;
 import java.util.List;
 import java.util.Locale;
 
+import static android.app.Activity.RESULT_OK;
+
 public class RankFragment extends Fragment implements View.OnClickListener, TabLayout.OnTabSelectedListener, CosmeticRankItemRVAdapter.OnItemClickListener {
     private View root;
     private RecyclerView categoryRV, skinTypeRV, ageRV, reviewRV;
     private CosmeticRankItemRVAdapter categoryRVAdapter, skinTypeRVAdapter, ageRVAdapter, reviewRVAdapter;
+    private final int REQUEST_COSMETIC_DETAIL = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,13 +58,20 @@ public class RankFragment extends Fragment implements View.OnClickListener, TabL
 
     @Override
     public void onResume() {
+        TabLayout categoryTab, skinTypeTab, ageTab;
+
         super.onResume();
 
         initializeRecyclerView();
 
-        refreshCategory(Constant.CATEGORY_ALL);
-        refreshSkinType(Constant.SKIN_DRY);
-        refreshAge("10대 미만");
+        categoryTab = root.findViewById(R.id.rank_categoryTabLayout);
+        skinTypeTab = root.findViewById(R.id.rank_skinTypeTabLayout);
+        ageTab = root.findViewById(R.id.rank_ageTabLayout);
+
+        refreshCategory(categoryTab.getTabAt(categoryTab.getSelectedTabPosition()).getText().toString());
+        refreshSkinType(skinTypeTab.getTabAt(skinTypeTab.getSelectedTabPosition()).getText().toString());
+        refreshAge(ageTab.getTabAt(ageTab.getSelectedTabPosition()).getText().toString());
+        refreshReview();
     }
 
     // 모든 TabLayout 초기화
@@ -120,6 +133,7 @@ public class RankFragment extends Fragment implements View.OnClickListener, TabL
     // 카테고리별 항목 새로고침
     private void refreshCategory(String category) {
         List<CosmeticRankItemData> cosmetics;
+        ImageView noIV;
         int rank;
 
         rank = 1;
@@ -130,6 +144,16 @@ public class RankFragment extends Fragment implements View.OnClickListener, TabL
         cosmetics = DataManagement.getInstance().getCosmetics();
         cosmetics = DataManagement.getInstance().getCosmeticFromCategory(cosmetics, category);
         cosmetics = DataManagement.getInstance().sortByCosemticRate(cosmetics);
+
+        noIV = root.findViewById(R.id.rank_categoryNoIV);
+
+        if(cosmetics.size() == 0) {
+            categoryRV.setVisibility(View.INVISIBLE);
+            noIV.setVisibility(View.VISIBLE);
+        } else {
+            noIV.setVisibility(View.INVISIBLE);
+            categoryRV.setVisibility(View.VISIBLE);
+        }
 
         // 2순위 까지만 보여주기
         for(int i = 0; i < cosmetics.size(); i++) {
@@ -152,6 +176,7 @@ public class RankFragment extends Fragment implements View.OnClickListener, TabL
     // 피부타입별 항목 새로고침
     private void refreshSkinType(String skinType) {
         List<CosmeticRankItemData> cosmetics;
+        ImageView noIV;
         int rank;
 
         rank = 1;
@@ -162,6 +187,16 @@ public class RankFragment extends Fragment implements View.OnClickListener, TabL
         cosmetics = DataManagement.getInstance().getCosmetics();
         cosmetics = DataManagement.getInstance().getCosmeticFromSkinType(cosmetics, skinType);
         cosmetics = DataManagement.getInstance().sortByCosemticRate(cosmetics);
+
+        noIV = root.findViewById(R.id.rank_skinTypeNoIV);
+
+        if(cosmetics.size() == 0) {
+            skinTypeRV.setVisibility(View.INVISIBLE);
+            noIV.setVisibility(View.VISIBLE);
+        } else {
+            noIV.setVisibility(View.INVISIBLE);
+            skinTypeRV.setVisibility(View.VISIBLE);
+        }
 
         // 2순위 까지만 보여주기
         for(int i = 0; i < cosmetics.size(); i++) {
@@ -184,6 +219,7 @@ public class RankFragment extends Fragment implements View.OnClickListener, TabL
     // 연령별 항목 새로고침
     private void refreshAge(String age) {
         List<CosmeticRankItemData> cosmetics;
+        ImageView noIV;
         int rank;
 
         rank = 1;
@@ -194,6 +230,16 @@ public class RankFragment extends Fragment implements View.OnClickListener, TabL
         cosmetics = DataManagement.getInstance().getCosmetics();
         cosmetics = DataManagement.getInstance().getCosmeticFromAge(cosmetics, age);
         cosmetics = DataManagement.getInstance().sortByCosemticRate(cosmetics);
+
+        noIV = root.findViewById(R.id.rank_ageNoIV);
+
+        if(cosmetics.size() == 0) {
+            ageRV.setVisibility(View.INVISIBLE);
+            noIV.setVisibility(View.VISIBLE);
+        } else {
+            noIV.setVisibility(View.INVISIBLE);
+            ageRV.setVisibility(View.VISIBLE);
+        }
 
         // 2순위 까지만 보여주기
         for(int i = 0; i < cosmetics.size(); i++) {
@@ -211,6 +257,29 @@ public class RankFragment extends Fragment implements View.OnClickListener, TabL
 
         // 변경됬음을 알림
         ageRVAdapter.notifyDataSetChanged();
+    }
+
+    // 리뷰 베스트 항목 새로고침
+    private void refreshReview() {
+        List<CosmeticRankItemData> cosmetics;
+        int rank;
+
+        rank = 1;
+
+        // 먼저 목록 지우기
+        reviewRVAdapter.delAllItem();
+
+        cosmetics = DataManagement.getInstance().getCosmetics();
+        cosmetics = DataManagement.getInstance().sortByCosemticRate(cosmetics);
+
+        for(CosmeticRankItemData cosmeticRankItemData : cosmetics) {
+            cosmeticRankItemData.setRank(rank++);
+
+            reviewRVAdapter.addItem(cosmeticRankItemData);
+        }
+
+        // 변경됬음을 알림
+        reviewRVAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -292,6 +361,38 @@ public class RankFragment extends Fragment implements View.OnClickListener, TabL
     // CosmeticRankItemRV Item 항목 클릭시
     @Override
     public void onItemClick(View v, int pos) {
-        // 화장품 정보로 넘어가기
+        Intent intent;
+        CosmeticRankItemData cosmeticRankItemData;
+        ViewParent parent = v.getParent();
+
+        cosmeticRankItemData = null;
+
+        if (categoryRV.equals(parent)) {
+            cosmeticRankItemData = categoryRVAdapter.getItem(pos);
+        } else if (skinTypeRV.equals(parent)) {
+            cosmeticRankItemData = skinTypeRVAdapter.getItem(pos);
+        } else if (ageRV.equals(parent)) {
+            cosmeticRankItemData = ageRVAdapter.getItem(pos);
+        } else if (reviewRV.equals(parent)) {
+            cosmeticRankItemData = reviewRVAdapter.getItem(pos);
+        }
+
+        intent = new Intent(getActivity(), CosmeticDetailActivity.class);
+
+        // 해당 제품 정보 넘기기
+        intent.putExtra("cosmeticItemData", cosmeticRankItemData);
+
+        // 해당 제품 화면으로 넘어가기
+        startActivityForResult(intent, REQUEST_COSMETIC_DETAIL);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode == RESULT_OK) {
+            if(requestCode == REQUEST_COSMETIC_DETAIL) {
+            }
+        }
     }
 }
