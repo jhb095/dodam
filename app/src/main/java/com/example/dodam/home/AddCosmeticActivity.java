@@ -31,6 +31,8 @@ import com.example.dodam.data.Constant;
 import com.example.dodam.data.CosmeticRankItemData;
 import com.example.dodam.data.IngredientItem;
 import com.example.dodam.data.IngredientItemData;
+import com.example.dodam.data.SearchData;
+import com.example.dodam.data.SearchManager;
 import com.example.dodam.database.Callback;
 import com.example.dodam.database.DatabaseManagement;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -40,6 +42,7 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionCloudTextRecognizerOptions;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
+import com.squareup.picasso.Picasso;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -411,7 +414,6 @@ public class AddCosmeticActivity extends AppCompatActivity implements View.OnCli
             // 카메라 요청에 대한 응답일 때
             if (requestCode == REQUEST_CAPTURE_IMAGE) {
                 ImageDecoder.Source source;
-                ImageView addCosmeticIV;
                 File file;
 
                 file = new File(currentPhotoPath);
@@ -429,10 +431,6 @@ public class AddCosmeticActivity extends AppCompatActivity implements View.OnCli
 
                 // 브랜드 명과 제품 명을 직접 입력할 건지 선택 Dialog 띄우기
                 showChoiceInputDialog();
-
-                addCosmeticIV = findViewById(R.id.addCosmetic_addCosmeticImageIV);
-
-                addCosmeticIV.setImageBitmap(cosmeticBitmap);
             } else if(requestCode == REQUEST_CAPTURE_INGREDENT || requestCode == REQUEST_CAPTURE_CROP) {
                 File file;
                 ImageDecoder.Source source;
@@ -698,7 +696,7 @@ public class AddCosmeticActivity extends AppCompatActivity implements View.OnCli
     }
 
     // 선택형 Dialog 띄우기
-    private void showCheckBoxDialog(String title, final ArrayList<String> texts, final Callback<Boolean> callback) {
+    private void showCheckBoxDialog(String title, final ArrayList<String> texts, final Callback<String> callback) {
         final AlertDialog.Builder builder;
         final AlertDialog alertDialog;
         final ArrayList<String> selectedItems;
@@ -739,21 +737,7 @@ public class AddCosmeticActivity extends AppCompatActivity implements View.OnCli
                 // 마지막 공백 제거
                 selectedTexts = selectedTexts.substring(0, selectedTexts.length() - 1);
 
-                // 브랜드 명 바꿔주기
-                if(callback != null) {
-                    EditText brandNameET;
-
-                    brandNameET = findViewById(R.id.addCosmetic_brandNameET);
-                    brandNameET.setText(selectedTexts);
-
-                    callback.onCallback(false);
-                } else {
-                    // 제품 명 바꿔주기
-                    EditText cosmeticNameET;
-
-                    cosmeticNameET = findViewById(R.id.addCosmetic_cosmeticNameET);
-                    cosmeticNameET.setText(selectedTexts);
-                }
+                callback.onCallback(selectedTexts);
             }
         });
 
@@ -764,10 +748,63 @@ public class AddCosmeticActivity extends AppCompatActivity implements View.OnCli
 
     // 브랜드 명 선택
     private void selectBrandAndCosmeticName(final ArrayList<String> texts) {
-        showCheckBoxDialog("브랜드 명 선택", texts, new Callback<Boolean>() {
+        final Context context;
+
+        context = this;
+
+        showCheckBoxDialog("브랜드 명 선택", texts, new Callback<String>() {
             @Override
-            public void onCallback(Boolean data) {
-                showCheckBoxDialog("제품 명 선택", texts, null);
+            public void onCallback(final String brandName) {
+                // 브랜드 명 선택 후
+                if(brandName != null) {
+                    showCheckBoxDialog("제품 명 선택", texts, new Callback<String>() {
+                        @Override
+                        public void onCallback(String cosmeticName) {
+                            // 제품 명 선택후
+                            if(cosmeticName != null) {
+                                final SearchManager searchManager;
+
+                                // 네이버 검색 API 호출
+                                searchManager = new SearchManager();
+                                searchManager.search(brandName + " " + cosmeticName, new Callback<Boolean>() {
+                                    @Override
+                                    public void onCallback(Boolean data) {
+                                        // 제품 데이터 추출후
+                                        if(data) {
+                                            final SearchData searchData;
+
+                                            searchData = searchManager.getSearchCosmetic();
+
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    EditText brandNameET, cosmeticNameET;
+                                                    TextView categoryTV;
+                                                    ImageView cosmeticIV;
+
+                                                    brandNameET = findViewById(R.id.addCosmetic_brandNameET);
+                                                    cosmeticNameET = findViewById(R.id.addCosmetic_cosmeticNameET);
+
+                                                    categoryTV = findViewById(R.id.addCosmetic_cosmeticCategoryTV);
+
+                                                    cosmeticIV = findViewById(R.id.addCosmetic_addCosmeticImageIV);
+
+                                                    // 브랜드 명, 제품 명, 카테고리 설정
+                                                    brandNameET.setText(searchData.getBrandName());
+                                                    cosmeticNameET.setText(searchData.getCosmeticName());
+                                                    categoryTV.setText(searchData.getCategory());
+
+                                                    // 화장품 이미지 설정
+                                                    Picasso.with(context).load(Uri.parse(searchData.getCosmeticImageURL())).resize(400, 400).into(cosmeticIV);
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
             }
         });
     }
